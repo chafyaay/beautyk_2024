@@ -91,9 +91,14 @@ export default function CheckoutScreen({ navigation }) {
 
   return (
     <View style={{ backgroundColor: "white" }}>
+      <Header
+        showCart={false}
+        navigation={navigation}
+        title={"Valider votre commande"}
+        search={false}
+      />
       <SafeAreaView>
         <ScrollView>
-          <Header navigation={navigation} title={"Valider votre commande"} />
           <View style={{ padding: 15, paddingBottom: 160 }}>
             <CustomerDetails
               isValidForm={setIsvalid}
@@ -101,6 +106,7 @@ export default function CheckoutScreen({ navigation }) {
               navigation={navigation}
               getCityHandler={setSelectedCity}
             />
+
             <OrderDetails
               getShippingMethod={setShippingMethod}
               city={selectedCity}

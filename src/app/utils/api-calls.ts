@@ -16,33 +16,75 @@ const consumerSecret1 = "cs_d71b603b0ccd0f981331e151873819cbdebbb0c5";
 const consumerKey = "ck_228e572a996092e7879760b466e485f24e98d5f6";
 const consumerSecret = "cs_5fa6ba3ace73d79352a0d4aae646e3bf267652c2";
 
+const local_consumerKey = "ck_fe0addf56211c2a2a112b2e8548545c97fbd39a7";
+const local_consumerSecret = "cs_325254077602b5d398acefa518466b037b00c8d1";
+
 const url1 = "https://beautikma.orgaliving.com/";
 const url = "https://orgaliving.com/";
+
+export const LOGIN_HANDLER = async (data) => {
+  const res = await axios.post(process.env.REACT_APP_API_AUTH_TOKEN, {
+    username: data?.email,
+    password: data?.password,
+  });
+  return res.data;
+};
 
 const WooCommerce = new WooCommerceRestApi({
   url: url,
   consumerKey: consumerKey,
   consumerSecret: consumerSecret,
   version: "wc/v3",
-  queryStringAuth: true,
-  view_woocommerce_reports: true,
-  manage_woocommerce: true,
-  limit: "10",
-  columns: "4",
-  orderby: "total_sales",
-  order: "DESC",
 });
 
 export const GET_CATEGORIES = async () => {
   return await WooCommerce.get("products/categories?search=promo");
 };
 
+export const GET_BANNER_PRODUCTS = async (category: string) => {
+  return await WooCommerce.get(
+    `products/categories?search=${
+      !!category ? "section-slider" : "section-slider"
+    }`
+  );
+};
+
+export const GET_TOP_SELLER = async () => {
+  return await WooCommerce.get(`reports/top_sellers?period=year`);
+};
+
+export const GET_CATEGORY = async (category_id: string) => {
+  return await WooCommerce.get(`products/categories/${category_id}`);
+};
+
+export const GET_PRODUCTS_BY_PRODUCTS_PER_PAGE = async (
+  category_id: string,
+  itemPerPgae: number,
+  pageNumber: number
+) => {
+  console.log("#", category_id, "#", itemPerPgae, "#", pageNumber);
+
+  return await WooCommerce.get(
+    `products?category=${category_id}&per_page=${itemPerPgae}&page=${pageNumber}`
+  );
+};
+
+export const GET_BANNER_BY_SECTION = async (category: string) => {
+  return await WooCommerce.get(`products/categories?search=${category}`);
+};
+
 export const GET_RECOMENDED_PRODUCTS = async () => {
   return await WooCommerce.get("products/categories?slug=recommended");
 };
 
+export const GET_REPORTS = async () => {
+  return await WooCommerce.get("reports/products/totals")
+    .then((response) => response.data)
+    .catch((error) => error.response.data);
+};
+
 export const GET_PRODUCTS = async () => {
-  return await WooCommerce.get("products");
+  return await WooCommerce.get("products?filter[limit]=-1");
 };
 
 export const GET_SHIPPING_MODES = async () => {
@@ -59,20 +101,6 @@ export const GET_ALL_PRODUCT_REVIEWS = async () => {
 
 export const CREATE_CUSTOMER = async (data: any) => {
   return WooCommerce.post("customers", data)
-    .then((response) => {
-      console.log(response.data);
-      return response.data;
-    })
-    .catch((error) => {
-      console.log(error.response.data);
-      return error.response.data;
-    });
-};
-
-export const LOGIN = async () => {
-  return WooCommerce.get(
-    "customers?username=y.chafyaay@gmail.com&password=Chy@@1986!!"
-  )
     .then((response) => {
       return response.data;
     })
@@ -96,12 +124,6 @@ export const get_payment_gateways = async () => {
     .catch((error) => error.response.data);
 };
 
-export const loginHandler = async ({ email, password }) => {
-  const data = { username: email, password: password };
-  const res = await axios.post(process.env.REACT_APP_API_AUTH_TOKEN, data);
-  return res.data;
-};
-
 export const registerHandler = async (user) => {
   if (!user || !user?.username || !user?.email || !user?.password) return null;
   const res = await axios.post(
@@ -109,4 +131,20 @@ export const registerHandler = async (user) => {
     user
   );
   return res.data;
+};
+
+export const GET_ORDERS = () => {
+  return WooCommerce.get("orders")
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.log(error.response.data);
+    });
+};
+
+export const GET_CUSTOMER = () => {
+  return WooCommerce.get("customers")
+    .then((response) => response?.data)
+    .catch((error) => error?.response?.data);
 };

@@ -15,6 +15,7 @@ import React, { useEffect, useState } from "react";
 import RenderHtml from "react-native-render-html";
 import moment from "moment";
 import Svg, { G, Path } from "react-native-svg";
+moment.locale("fr");
 
 const StarRender = ({ width }) => (
   <View style={{ width: 180, marginTop: 10, marginBottom: 7 }}>
@@ -135,7 +136,7 @@ export const RatingReview = ({ product }: any) => {
                     style={{ color: MD2Colors.indigo500 }}
                     variant="bodySmall"
                   >
-                    {moment(date_created).format("MM/DD/YYY")}
+                    {moment(date_created).format("LL")}
                   </Text>
                 </View>
               </View>

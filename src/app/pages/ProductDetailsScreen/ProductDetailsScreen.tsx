@@ -1,35 +1,18 @@
+import { ScrollView, View, ImageBackground, Pressable } from "react-native";
 import {
-  ScrollView,
-  View,
-  Image,
-  ImageBackground,
-  Pressable,
-} from "react-native";
-import ProductItem from "../../components/Product/ProductItem";
-import {
-  Card,
-  Paragraph,
   Text,
-  Button,
   Badge,
   IconButton,
-  MD2DarkTheme,
-  MD3DarkTheme,
   MD2Colors,
   Divider,
   Icon,
-  MD3Colors,
-  Portal,
   SegmentedButtons,
   ActivityIndicator,
 } from "react-native-paper";
 import React, { useEffect, useState } from "react";
-import WebView from "react-native-webview";
-import { $color1, $color2, deviceWidth } from "../../utils/device";
+import { TEXT_COLOR, deviceWidth } from "../../utils/device";
 import Carousel from "react-native-snap-carousel";
-import { AirbnbRating, Rating } from "react-native-ratings";
-import RenderHtml, { RenderHTML } from "react-native-render-html";
-import { StatusBar } from "expo-status-bar";
+import RenderHtml from "react-native-render-html";
 import { useSelector } from "react-redux";
 import AddToCart from "../../components/AddToCart";
 import { ProductProps } from "../../utils/models";
@@ -44,7 +27,7 @@ export default function ProductDetailsScreen({ route, navigation }) {
   const [shippingData, setShippingData] = useState([]);
   const [segmentedButtonsValue, setSegmentedButtonsValue] = useState("about");
 
-  const { cart } = useSelector((state) => state) as any;
+  const { cart } = useSelector((state: any) => state.cart) as any;
   const quantity = cart?.items?.reduce((a, b) => (a += b?.quantity), 0);
 
   const product = route?.params?.product as ProductProps;
@@ -95,11 +78,10 @@ export default function ProductDetailsScreen({ route, navigation }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
+      <Header search={false} showCart navigation={navigation} title={""} />
       <ScrollView>
         <SafeAreaView>
           <View style={{ padding: 15 }}>
-            <Header navigation={navigation} title={""} />
-
             <Carousel
               layout="default"
               autoplay
@@ -155,7 +137,7 @@ export default function ProductDetailsScreen({ route, navigation }) {
                 {!sale_price ? (
                   <Text
                     variant="titleMedium"
-                    style={{ fontWeight: "800", color: $color1 }}
+                    style={{ fontWeight: "800", color: TEXT_COLOR.primary }}
                   >
                     {price} Dh
                   </Text>
@@ -164,7 +146,7 @@ export default function ProductDetailsScreen({ route, navigation }) {
                     <Text
                       variant="bodySmall"
                       style={{
-                        color: $color2,
+                        color: TEXT_COLOR.default,
                         textDecorationLine: "line-through",
                       }}
                     >
@@ -172,7 +154,7 @@ export default function ProductDetailsScreen({ route, navigation }) {
                     </Text>
                     <Text
                       variant="titleMedium"
-                      style={{ fontWeight: "800", color: $color1 }}
+                      style={{ fontWeight: "800", color: TEXT_COLOR.primary }}
                     >
                       {sale_price} Dh
                     </Text>

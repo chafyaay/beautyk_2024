@@ -30,8 +30,6 @@ export const OrderReceivedScreen = ({ navigation, route }) => {
     currency,
   } = route?.params;
 
-  console.log(route?.params);
-
   useEffect(() => {
     navigation.setOptions({
       headerShown: false,

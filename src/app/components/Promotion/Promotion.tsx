@@ -1,23 +1,18 @@
-import { useEffect, useState } from "react";
 import {
-  Dimensions,
-  StatusBar,
   StyleSheet,
   Text,
-  Image,
   View,
   Pressable,
-  Button,
   ImageBackground,
   ActivityIndicator,
 } from "react-native";
 import Carousel from "react-native-snap-carousel";
-import { GET_CATEGORIES } from "../../utils/api-calls";
+import { GET_BANNER_BY_SECTION, GET_CATEGORIES } from "../../utils/api-calls";
 import { useQuery } from "react-query";
-import { $color1, deviceWidth } from "../../utils/device";
+import { deviceWidth } from "../../utils/device";
 import { MD2Colors } from "react-native-paper";
 
-export default function Promotion() {
+export default function Promotion({ data }) {
   const _renderItem = ({ item, index }) => {
     return (
       <View
@@ -41,7 +36,7 @@ export default function Promotion() {
                 bottom: 10,
                 zIndex: 1,
                 margin: "auto",
-                backgroundColor: $color1,
+
                 width: deviceWidth / 3,
                 borderRadius: 5,
               }}
@@ -65,15 +60,19 @@ export default function Promotion() {
     );
   };
 
-  const { data, isLoading } = useQuery("getCategories", GET_CATEGORIES);
-
   return (
     <Carousel
+      onTouchEnd={(e) => {
+        console.log(e);
+      }}
+      onTouchMove={(e) => {
+        console.log(e.target);
+      }}
       layout="default"
       autoplay
       pagingEnabled
       hasParallaxImages
-      data={data?.data}
+      data={data}
       renderItem={_renderItem}
       sliderWidth={deviceWidth}
       itemWidth={deviceWidth}

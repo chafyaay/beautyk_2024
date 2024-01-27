@@ -20,7 +20,7 @@ import { deviceHeight, deviceWidth } from "../../utils/device";
 import Storage from "react-native-storage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DefaultButton, PrimaryButton } from "../../components/UI/Buttons";
-import { CREATE_CUSTOMER, LOGIN, loginHandler } from "../../utils/api-calls";
+import { GET_CUSTOMER, LOGIN_HANDLER } from "../../utils/api-calls";
 import {
   GET_CART,
   getCart,
@@ -32,10 +32,17 @@ import {
   getToken,
   getUserData,
   setToken,
-  setUserData,
+  setUser,
 } from "../../utils/store/actions/user.actions";
 import { connect } from "react-redux";
 import { PrimaryInputText } from "../../components/UI/InputText";
+import {
+  setAllProducts,
+  setProduct,
+} from "../../utils/store/actions/product.action";
+import Toast from "react-native-toast-message";
+import axios from "axios";
+import { err } from "react-native-svg";
 
 const LoginFormSchema = Yup.object().shape({
   phone: Yup.string()
@@ -54,11 +61,17 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
   setUserData,
   getUserData,
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const { userReducer } = useSelector((state) => state) as any;
-  const { tokenReducer } = useSelector((state) => state) as any;
+  const [orders, setOrders] = useState([]);
+  const [isLoading, setisLoading] = useState(false);
+  const dispatch = useDispatch();
 
-  const disatach = useDispatch();
+  const getCustomer = async (email: string) => {
+    const response = (await GET_CUSTOMER()) as any[];
+
+    if (response?.length > 0 && !!email)
+      return response.find((customer) => customer?.email === email);
+    return {};
+  };
 
   return (
     <Portal>
@@ -154,6 +167,53 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                       justifyContent: "space-between",
                     }}
                   >
+                    <DefaultButton
+                      disabled={false}
+                      title={"Se connecter"}
+                      onEventHandler={async () => {
+                        const email = "y.chafyaay@gmail.com";
+                        const password = "Chy@@1986!!";
+
+                        const response = await LOGIN_HANDLER({
+                          email,
+                          password,
+                        });
+
+                        if (!!response?.token && !!response?.user_email) {
+                          const customer = (await getCustomer(
+                            response.user_email
+                          )) as any;
+
+                          const customer_id = customer?.id;
+
+                          dispatch(
+                            setUser({
+                              token: response.token,
+                              user: {
+                                displayName: response.user_display_name,
+                                userName: response.user_nicename,
+                                email: response.user_email,
+                              },
+                              customer: customer,
+                            })
+                          );
+                        } else if (!!response?.message) {
+                          const text = response?.message.split(".");
+                          Toast.show({
+                            type: "error",
+                            text1: text[0],
+                            text2: text[1],
+                          });
+                        } else {
+                          Toast.show({
+                            type: "error",
+                            text1: "Echec de l'authentification!",
+                            text2: "Erreur inconnue !",
+                          });
+                        }
+                      }}
+                    />
+
                     <PrimaryButton
                       title="Créer un compte"
                       onEventHandler={() => {
@@ -164,29 +224,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                         .catch((err) => {
                           console.log("err:::;;;::\n", err);
                         }); */
-                      }}
-                    />
-                    <DefaultButton
-                      title={"Se connecter"}
-                      onEventHandler={() => {
-                        const email = "y.chafyaay@gmail.com";
-                        const password = "Chy@@1986!!";
-                        loginHandler({ email, password })
-                          .then((response) => {
-                            console.log();
-                            const _token = response?.token;
-                            const userData = {
-                              displayName: response?.user_display_name,
-                              email: response?.user_email,
-                              userName: response?.user_nicename,
-                            };
-
-                            // setUserData(userData);
-                            setToken(_token);
-                          })
-                          .catch((err) => {
-                            console.log("ERR:::", err);
-                          });
                       }}
                     />
                   </View>
@@ -203,11 +240,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
 const mapStateToProps = (state) => ({
   user: state,
   token: state,
+  cart: state?.cartReducer,
+  products: state,
 });
 
 export default connect(mapStateToProps, {
   setToken,
   getToken,
-  setUserData,
   getUserData,
+  setAllProducts,
+  setProduct,
 })(LoginScreen);

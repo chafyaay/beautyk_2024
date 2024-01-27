@@ -1,6 +1,4 @@
 import {
-  Image,
-  ImageBackground,
   Pressable,
   SafeAreaView,
   ScrollView,
@@ -10,38 +8,21 @@ import {
 import { useSelector } from "react-redux";
 import {
   Button,
-  Card,
   DataTable,
-  Divider,
   Icon,
   IconButton,
   MD2Colors,
-  MD2DarkTheme,
-  MD2LightTheme,
-  MD3Colors,
-  MD3DarkTheme,
   MD3LightTheme,
-  Paragraph,
-  Portal,
   Text,
   TextInput,
 } from "react-native-paper";
-import AddToCart from "../../components/AddToCart";
-import {
-  $color1,
-  $color2,
-  $defaultColor,
-  $primaryColor,
-  deviceHeight,
-  deviceWidth,
-} from "../../utils/device";
-import { ProductProps } from "../../utils/models";
+
 import BottomNavBar from "../../components/BottomNavBar/BottomNavBar";
 import { useEffect } from "react";
-import { ProductCard } from "../../components/Product/ProductCard";
-import { onClearCart } from "../../utils/store/actions/cart.actions";
 import Header from "../../components/Header/Header";
 import { PrimaryButton } from "../../components/UI/Buttons";
+import { TEXT_COLOR } from "../../utils/device";
+import { ProductListCard } from "../../components/Product/ProductListCard";
 
 export default function CartScreen({ navigation, route }) {
   const { cart } = useSelector((state) => state) as any;
@@ -51,10 +32,10 @@ export default function CartScreen({ navigation, route }) {
     0
   );
 
-  useEffect(() => {
+  /*   useEffect(() => {
     navigation.setOptions({
       title: !!cartCount ? "Mon Panier" : "",
-      headerShown: false,
+
       headerLeft: (props) => {
         return (
           <>
@@ -69,9 +50,7 @@ export default function CartScreen({ navigation, route }) {
         );
       },
     });
-  }, []);
-
-  return (
+  }, []) */ return (
     <View style={{ flex: 1 }}>
       {!cartCount ? (
         <View
@@ -88,7 +67,11 @@ export default function CartScreen({ navigation, route }) {
               alignItems: "center",
             }}
           >
-            <Icon color={$primaryColor} size={100} source="shopping-outline" />
+            <Icon
+              color={TEXT_COLOR.primary}
+              size={100}
+              source="shopping-outline"
+            />
             <Text
               variant="titleMedium"
               style={{
@@ -102,29 +85,31 @@ export default function CartScreen({ navigation, route }) {
             <Button
               onPress={() => navigation?.navigate("HomeScreen")}
               mode="contained"
-              buttonColor={$defaultColor}
-              textColor={$primaryColor}
+              buttonColor={TEXT_COLOR.default}
+              textColor={TEXT_COLOR.primary}
             >
               Continuer vos achats
             </Button>
           </View>
         </View>
       ) : (
-        <>
+        <View style={{ flex: 1 }}>
+          <Header
+            showCart={false}
+            navigation={navigation}
+            title={"Mon Panier"}
+            search={false}
+          />
           <BottomNavBar pageId={route.name} navigation={navigation} />
 
           <ScrollView>
             <SafeAreaView>
               <View style={{ padding: 15 }}>
-                <Header navigation={navigation} title={"Mon panier"} />
                 <View style={{ marginTop: 20 }}>
                   {cart?.items?.map(({ product }) => {
-                    const { sale_price, price, regular_price } =
-                      product as ProductProps;
                     return (
-                      <ProductCard
+                      <ProductListCard
                         navigation={navigation}
-                        type="a"
                         product={product}
                       />
                     );
@@ -180,7 +165,7 @@ export default function CartScreen({ navigation, route }) {
               </View>
             </SafeAreaView>
           </ScrollView>
-        </>
+        </View>
       )}
     </View>
   );

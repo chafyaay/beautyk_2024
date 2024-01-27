@@ -1,10 +1,23 @@
 import { View } from "react-native";
 import { useState } from "react";
-import ProductCard from "./ProductItem";
-import { Button, Text } from "react-native-paper";
-import { $color2 } from "../../utils/device";
+import { Text } from "react-native-paper";
+import { ShowAllProductButton } from "../UI/Buttons";
+import { ProductProps } from "../../utils/models";
+import ProductCard from "./ProductCard";
 
-export default function ProductList({ navigation, products, titleContent }) {
+interface ProductListProps {
+  navigation: any;
+  products: ProductProps[];
+  titleContent?: string;
+  showAll?: boolean;
+}
+
+export const ProductList: React.FC<ProductListProps> = ({
+  navigation,
+  products,
+  titleContent,
+  showAll,
+}) => {
   const [listView, setListView] = useState("row");
 
   return (
@@ -16,13 +29,18 @@ export default function ProductList({ navigation, products, titleContent }) {
           alignItems: "center",
         }}
       >
-        <Text
-          style={{ marginBottom: 10, color: $color2 }}
-          variant="titleMedium"
-        >
+        <Text style={{ marginBottom: 10 }} variant="titleMedium">
           {titleContent}
         </Text>
-        <Button>Afficher tous</Button>
+        {!!showAll && (
+          <ShowAllProductButton
+            icon={""}
+            title=""
+            onEventHandler={() => {
+              navigation.navigate("ProductListScreen");
+            }}
+          />
+        )}
       </View>
 
       <View
@@ -33,10 +51,10 @@ export default function ProductList({ navigation, products, titleContent }) {
           flexWrap: "wrap",
         }}
       >
-        {products?.slice(0, 4)?.map((product) => (
+        {products?.map((product) => (
           <ProductCard navigation={navigation} product={product} />
         ))}
       </View>
     </View>
   );
-}
+};

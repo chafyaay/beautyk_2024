@@ -1,31 +1,16 @@
 import { StyleSheet, View } from "react-native";
-import {
-  Badge,
-  Button,
-  Dialog,
-  IconButton,
-  MD2Colors,
-  MD2DarkTheme,
-  MD3Colors,
-  Portal,
-  Text,
-} from "react-native-paper";
+import { IconButton, Text } from "react-native-paper";
 import {
   onClearCart,
   updateCartItem,
 } from "../utils/store/actions/cart.actions";
 import { connect } from "react-redux";
-import {
-  $color1,
-  $color2,
-  $defaultColor,
-  $primaryColor,
-  deviceWidth,
-} from "../utils/device";
+
 import React, { useEffect, useState } from "react";
 import { ProductProps } from "../utils/models";
 import Toast from "react-native-toast-message";
 import { PrimaryButton } from "./UI/Buttons";
+import { TEXT_COLOR } from "../utils/device";
 
 interface AddToCartProps {
   navigation: any;
@@ -55,7 +40,6 @@ const AddToCart: React.FC<AddToCartProps> = ({
   route,
 }) => {
   const [cartCount, setCartCount] = useState(1);
-  const [showDialog, setShowDialog] = useState(false);
 
   const item = cart?.items?.find((it) => it.product?.id === product?.id);
 
@@ -100,14 +84,14 @@ const AddToCart: React.FC<AddToCartProps> = ({
   const RenderAddToCart = () => {
     if (isHomePage) {
       return (
-        <View>
-          <IconButton
-            mode="outlined"
-            size={17}
-            icon="cart-plus"
-            onPress={() => handleAddToCart(1)}
-          />
-        </View>
+        <IconButton
+          mode="contained"
+          selected
+          size={15}
+          hitSlop={12}
+          icon="cart-plus"
+          onPress={() => handleAddToCart(1)}
+        />
       );
     } else if (isProductPage) {
       return (
@@ -149,14 +133,14 @@ const AddToCart: React.FC<AddToCartProps> = ({
               size={10}
               icon="minus"
               onPress={() => handleAddToCart(-1)}
-              iconColor={$color1}
+              iconColor={TEXT_COLOR.primary}
               mode="outlined"
             />
             <Text style={{ fontSize: 10 }} variant="bodyMedium">
               {item?.quantity}
             </Text>
             <IconButton
-              iconColor={$color1}
+              iconColor={TEXT_COLOR.primary}
               size={10}
               icon="plus"
               onPress={() => handleAddToCart(1)}
@@ -165,7 +149,7 @@ const AddToCart: React.FC<AddToCartProps> = ({
           </View>
           {!!showDeleteIcon && (
             <IconButton
-              iconColor={$color1}
+              iconColor={TEXT_COLOR.primary}
               size={10}
               icon="delete"
               onPress={() => handleAddToCart(-item?.quantity)}

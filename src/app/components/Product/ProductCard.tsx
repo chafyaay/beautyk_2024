@@ -1,31 +1,39 @@
-import { useEffect } from "react";
-import {
-  Image,
-  ImageBackground,
-  Pressable,
-  StyleSheet,
-  View,
-} from "react-native";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { updateCartItem } from "../../utils/store/actions/cart.actions";
-import { connect } from "react-redux";
-import useAddToCart from "../AddToCart";
+import { ImageBackground, Pressable, View } from "react-native";
 import AddToCart from "../AddToCart";
-import { $color1, $color2, deviceWidth } from "../../utils/device";
-import { Badge, MD2Colors, Paragraph, Text } from "react-native-paper";
-import { ProductProps } from "../../utils/models";
+import { Paragraph, Text } from "react-native-paper";
+import { BG_DARK_COLOR, BG_LIGHT_COLOR, TEXT_COLOR } from "../../utils/device";
 
-interface ProductCardProps {
-  product: ProductProps;
-  type?: "a" | "b" | "c";
-  navigation: any;
-}
+const Price = ({ sale_price, regular_price, price }) => {
+  return (
+    <View style={{ position: "absolute", bottom: 10, left: 10 }}>
+      {!!sale_price ? (
+        <>
+          <Text
+            variant="titleLarge"
+            style={{ fontWeight: "700", color: TEXT_COLOR.primary }}
+          >
+            {sale_price} Dh
+          </Text>
+          <Text
+            variant="bodySmall"
+            style={{
+              color: TEXT_COLOR.primary,
+              textDecorationLine: "line-through",
+            }}
+          >
+            {regular_price} Dh
+          </Text>
+        </>
+      ) : (
+        <Text variant="titleMedium" style={{ color: TEXT_COLOR.primary }}>
+          {price} Dh
+        </Text>
+      )}
+    </View>
+  );
+};
 
-export const ProductCard: React.FC<ProductCardProps> = ({
-  navigation,
-  product,
-  type,
-}) => {
+export default function ProductCard({ product, navigation }) {
   const {
     images,
     name,
@@ -38,121 +46,100 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <Pressable
-      onPress={() => navigation?.navigate("ProductDetailsScreen")}
-      style={
-        type !== "c"
-          ? styles.container
-          : {
-              flexDirection: "row",
-              height: 70,
-              justifyContent: "space-between",
-              alignItems: "flex-start",
-              borderRadius: 2,
-              marginBottom: 5,
-              width: "100%",
-            }
-      }
+      onPress={() => {
+        try {
+          navigation?.navigate("ProductDetailsScreen", { product });
+        } catch (error) {
+          console.log(error);
+        }
+      }}
+      style={{
+        width: "49%",
+        height: 260,
+        backgroundColor: "white",
+        borderRadius: 6,
+        marginBottom: 10,
+        borderWidth: 1,
+        borderColor: BG_LIGHT_COLOR.primary,
+      }}
     >
-      {type !== "c" && (
-        <ImageBackground
-          source={{
-            uri: product?.images[0]?.src,
-          }}
-          resizeMode="contain"
-          imageStyle={{ width: "100%" }}
-          style={styles.cover}
-        />
+      <Text
+        style={{
+          color: TEXT_COLOR.title,
+          textTransform: "uppercase",
+          fontWeight: "900",
+          fontSize: 9,
+          position: "absolute",
+          top: 10,
+          zIndex: 9,
+          left: 10,
+          padding: 2,
+          borderRadius: 3,
+          backgroundColor:
+            stock_status === "instock"
+              ? BG_DARK_COLOR.default
+              : BG_DARK_COLOR.error,
+        }}
+        variant="labelSmall"
+      >
+        {stock_status === "instock" ? "En Stock" : "Epuisé"}
+      </Text>
+
+      <ImageBackground
+        resizeMode="cover"
+        style={{
+          height: 150,
+          width: "100%",
+          backgroundColor: "white",
+          borderTopLeftRadius: 5,
+          borderTopRightRadius: 4,
+        }}
+        imageStyle={{ borderRadius: 2 }}
+        source={{
+          uri: images[0]?.src,
+        }}
+      />
+      <View style={{ padding: 5 }}>
+        <Paragraph
+          style={{ fontSize: 12, lineHeight: 13, textTransform: "capitalize" }}
+        >
+          {name}{" "}
+        </Paragraph>
+      </View>
+
+      {/* price */}
+      <Price
+        sale_price={sale_price}
+        regular_price={regular_price}
+        price={price}
+      />
+      {stock_status === "instock" && (
+        <View style={{ position: "absolute", bottom: 0, right: 0 }}>
+          <AddToCart navigation={navigation} isHomePage product={product} />
+        </View>
       )}
 
-      <View
-        style={type !== "c" ? styles.body : { width: "75%", paddingLeft: 10 }}
-      >
+      {/* on sale  */}
+      {!!on_sale && (
         <Text
-          variant="bodySmall"
           style={{
-            paddingRight: 30,
-            marginTop: 10,
-            color: MD2Colors.indigo800,
+            color: "white",
+            textTransform: "uppercase",
+            fontWeight: "900",
+            fontSize: 9,
+            position: "absolute",
+            bottom: 10,
+            zIndex: 9,
+            right: 75,
+            padding: 2,
+            borderRadius: 3,
+            backgroundColor: BG_DARK_COLOR.error,
           }}
         >
-          {product?.name}
+          {-Math.round(((regular_price - sale_price) * 100) / regular_price) +
+            "%"}
         </Text>
-        {/* price */}
-        <View>
-          {!sale_price ? (
-            <Text variant="titleMedium" style={{ color: $color1 }}>
-              {price} Dh
-            </Text>
-          ) : (
-            <>
-              <Text
-                variant="bodySmall"
-                style={{
-                  color: $color2,
-                  textDecorationLine: "line-through",
-                }}
-              >
-                {regular_price} Dh
-              </Text>
-              <Text variant="titleMedium" style={{ color: $color1 }}>
-                {sale_price} Dh
-              </Text>
-            </>
-          )}
-        </View>
-        <View
-          style={
-            type !== "c"
-              ? {
-                  position: "absolute",
-                  bottom: 0,
-                  right: 10,
-                  width: "100%",
-                }
-              : {
-                  position: "absolute",
-                  top: 0,
-                  right: "-30%",
-                  width: "30%",
-                }
-          }
-        >
-          <AddToCart
-            showDeleteIcon={type !== "c"}
-            isCartPage
-            product={product}
-            navigation={navigation}
-          />
-        </View>
-      </View>
+      )}
     </Pressable>
   );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    justifyContent: "flex-start",
-    flexDirection: "row",
-    alignItems: "center",
-    borderColor: MD2Colors.indigo100,
-    borderWidth: 1,
-    borderRadius: 3,
-    marginBottom: 5,
-    width: "100%",
-    height: 100,
-    backgroundColor: "white",
-  },
-  cover: {
-    width: 100,
-    height: 70,
-    padding: 10,
-    marginRight: "3%",
-    borderRightColor: MD2Colors.indigo100,
-    borderRightWidth: 1,
-  },
-  body: {
-    width: deviceWidth - 145,
-    height: "100%",
-    paddingLeft: 15,
-  },
-});
+}

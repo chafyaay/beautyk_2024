@@ -67,6 +67,7 @@ export interface ProductProps {
     }
   ];
   tags: [];
+  image: { src: string };
   images: [
     {
       id: number;

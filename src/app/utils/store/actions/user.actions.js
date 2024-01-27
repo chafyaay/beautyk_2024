@@ -1,7 +1,9 @@
-export const GET_USER_DATA = "user/GET_USER_DATA";
-export const SET_USER_DATA = "user/SET_USER_DATA";
+export const GET_USER = "user/GET_USER";
+export const SET_USER = "user/SET_USER";
 export const SET_TOKEN = "user/SET_TOKEN";
 export const GET_TOKEN = "user/GET_TOKEN";
+export const SET_CUSTOMER = "user/SET_CUSTOMER";
+export const GET_CUSTOMER = "user/GET_CUSTOMER";
 
 export const setToken = (token) => {
   return {
@@ -16,13 +18,22 @@ export const getToken = () => {
   };
 };
 
-export const setUserData = (data) => {
+export const setUser = (data) => {
   return {
-    type: SET_USER_DATA,
+    type: SET_USER,
     data,
   };
 };
-
 export const getUserData = () => ({
-  type: GET_USER_DATA,
+  type: GET_USER,
+});
+
+export const setCustomer = (data) => {
+  return {
+    type: SET_CUSTOMER,
+    data,
+  };
+};
+export const getCustomer = () => ({
+  type: GET_CUSTOMER,
 });

@@ -4,22 +4,28 @@ import { MD2Colors } from "react-native-paper";
 export const deviceWidth = Dimensions.get("window").width;
 export const deviceHeight = Dimensions.get("window").height;
 
-export const $color1 = "#B557B1";
-export const $color2 = "#575BB5";
+export const BG_DARK_COLOR = {
+  primary: MD2Colors.indigo500,
+  default: MD2Colors.greenA400,
+  error: MD2Colors.red500,
+  a_error: MD2Colors.redA400,
+  disabled: MD2Colors.grey500,
+};
 
-export const $primaryColor = MD2Colors.indigo500;
-export const $defaultColor = MD2Colors.greenA400;
+export const BG_LIGHT_COLOR = {
+  primary: MD2Colors.indigo100,
+  default: MD2Colors.greenA100,
+  error: MD2Colors.red100,
+  a_error: MD2Colors.redA100,
+  disabled: MD2Colors.grey100,
+};
 
-export const $primaryTextColor = MD2Colors.indigo900;
-export const $defaultTextColor = MD2Colors.green500;
-
-export const $primaryBgColor = MD2Colors.indigo100;
-export const $defaultBgColor = MD2Colors.greenA100;
-
-export const $disabledBgColor = MD2Colors.grey200;
-export const $disabledTextColor = MD2Colors.grey500;
-
-export const $error = MD2Colors.red500;
-
-export const $titleText = MD2Colors.indigo500;
-export const $bodyText = MD2Colors.indigo800;
+export const TEXT_COLOR = {
+  primary: MD2Colors.indigo500,
+  default: MD2Colors.green500,
+  error: MD2Colors.red500,
+  a_error: MD2Colors.redA700,
+  disabled: MD2Colors.grey500,
+  title: MD2Colors.indigo500,
+  body: MD2Colors.indigo800,
+};

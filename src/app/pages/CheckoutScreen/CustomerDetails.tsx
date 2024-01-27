@@ -18,11 +18,7 @@ import { Picker } from "@react-native-picker/picker";
 import { Formik } from "formik";
 import { Separator } from "../../components/commun/Separator";
 import { CustomerInput } from "../../components/UI/CustomerInput";
-import {
-  $defaultColor,
-  $primaryBgColor,
-  $primaryColor,
-} from "../../utils/device";
+import { BG_DARK_COLOR } from "../../utils/device";
 
 let initialFormInputs = {
   first_name: "",
@@ -92,8 +88,6 @@ export const CustomerDetails: React.FC<{
     const a = !touched && formik?.current?.isValid;
     const b = !!cityValue;
     const c = a && b;
-
-    console.log("touched------", Object.keys(formik?.current.touched).length);
 
     isValidForm(c);
   };
@@ -193,7 +187,7 @@ export const CustomerDetails: React.FC<{
             >
               <Button
                 mode="contained"
-                buttonColor={$primaryColor}
+                buttonColor={BG_DARK_COLOR.primary}
                 onPress={() => {
                   onValidateForm();
                   setVisible(false);

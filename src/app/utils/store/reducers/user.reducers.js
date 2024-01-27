@@ -1,34 +1,42 @@
 import {
-  GET_USER_DATA,
+  GET_USER,
   SET_TOKEN,
   GET_TOKEN,
-  SET_USER_DATA,
+  SET_USER,
+  SET_CUSTOMER,
+  GET_CUSTOMER,
 } from "../actions/user.actions";
 
-export const tokenReducer = (state = "", action) => {
-  switch (action.type) {
-    case SET_TOKEN:
-      const token = action.token;
-      console.log("token", token);
-      console.log("state", state);
-      return { ...state, token: token };
-
-    case GET_TOKEN:
-      return { state };
-
-    default:
-      return state;
-  }
+const intialUserReducer = {
+  token: "",
+  user: {},
+  customer: {},
+  orders: [],
 };
 
-export const userReducer = (state = [], action) => {
+export const userReducer = (state = intialUserReducer, action) => {
   switch (action.type) {
-    case GET_USER_DATA:
-      return { state };
+    case SET_USER:
+      const user = action.data;
+      state = { ...state, ...user };
+      return state;
 
-    case SET_USER_DATA:
+    case GET_USER:
+      return { ...state };
+
+    /*  case SET_USER:
       const userData = action.data;
       return { ...state, ...userData };
+
+    case GET_USER:
+      return { state };
+
+    case SET_CUSTOMER:
+      const customerData = action.data;
+      return { ...state, ...customerData };
+
+    case GET_CUSTOMER:
+      return { state }; */
 
     default:
       return state;
