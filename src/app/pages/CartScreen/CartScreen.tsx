@@ -7,167 +7,143 @@ import {
 } from "react-native";
 import { useSelector } from "react-redux";
 import {
-  Button,
   DataTable,
   Icon,
   IconButton,
   MD2Colors,
   MD3LightTheme,
+  Portal,
   Text,
   TextInput,
 } from "react-native-paper";
 
 import BottomNavBar from "../../components/BottomNavBar/BottomNavBar";
 import { useEffect } from "react";
-import Header from "../../components/Header/Header";
-import { PrimaryButton } from "../../components/UI/Buttons";
-import { TEXT_COLOR } from "../../utils/device";
 import { ProductListCard } from "../../components/Product/ProductListCard";
+import { PressableButton } from "../../components/UI/Buttons";
+import { TEXT_COLOR, deviceHeight } from "../../utils/device";
+import { useNavigation } from "@react-navigation/native";
+import { Typography } from "../../components/UI/Typography";
+import AppHeader from "../../components/AppHeader/AppHeader";
+import Spacer from "../../components/UI/Spacer";
 
-export default function CartScreen({ navigation, route }) {
+export default function CartScreen() {
   const { cart } = useSelector((state) => state) as any;
   const cartCount = cart?.items?.reduce((a, b) => (a += b?.quantity), 0);
   const subTotal = cart?.items?.reduce(
     (a, b) => (a += b?.quantity * b?.product.price),
     0
   );
+  const navigation = useNavigation() as any;
 
-  /*   useEffect(() => {
-    navigation.setOptions({
-      title: !!cartCount ? "Mon Panier" : "",
+  useEffect(() => {
+    if (!cartCount)
+      navigation.setOptions({
+        header: () => <AppHeader />,
+      });
+  }, [cartCount]);
 
-      headerLeft: (props) => {
-        return (
-          <>
-            {!!cartCount && (
-              <IconButton
-                onPress={() => navigation.goBack()}
-                icon={"arrow-left"}
-                size={17}
-              ></IconButton>
-            )}
-          </>
-        );
-      },
-    });
-  }, []) */ return (
-    <View style={{ flex: 1 }}>
-      {!cartCount ? (
-        <View
-          style={{
-            flex: 1,
-            flexDirection: "column",
-            justifyContent: "space-around",
-            alignItems: "center",
-            alignContent: "center",
-          }}
-        >
-          <View
-            style={{
-              alignItems: "center",
-            }}
-          >
-            <Icon
-              color={TEXT_COLOR.primary}
-              size={100}
-              source="shopping-outline"
-            />
-            <Text
-              variant="titleMedium"
-              style={{
-                color: MD2Colors.indigo500,
-                textAlign: "center",
-                marginBottom: 40,
-              }}
-            >
-              Votre panier est Vide :(
-            </Text>
-            <Button
-              onPress={() => navigation?.navigate("HomeScreen")}
-              mode="contained"
-              buttonColor={TEXT_COLOR.default}
-              textColor={TEXT_COLOR.primary}
-            >
-              Continuer vos achats
-            </Button>
-          </View>
-        </View>
-      ) : (
-        <View style={{ flex: 1 }}>
-          <Header
-            showCart={false}
-            navigation={navigation}
-            title={"Mon Panier"}
-            search={false}
-          />
-          <BottomNavBar pageId={route.name} navigation={navigation} />
-
-          <ScrollView>
-            <SafeAreaView>
-              <View style={{ padding: 15 }}>
-                <View style={{ marginTop: 20 }}>
-                  {cart?.items?.map(({ product }) => {
-                    return (
-                      <ProductListCard
-                        navigation={navigation}
-                        product={product}
-                      />
-                    );
-                  })}
-                </View>
-                {/* code promo */}
-                <View style={{ marginTop: 20 }}>
-                  <TextInput
-                    style={styles.codePromo}
-                    label="Code promo"
-                    value=""
-                    placeholder="XC123FV"
-                    onChangeText={(text) => {}}
-                    mode="outlined"
-                    theme={MD3LightTheme}
-                  />
-                  <Pressable
-                    style={{ position: "absolute", right: 5, top: 10 }}
-                  >
-                    <PrimaryButton onEventHandler={() => {}} title="Valider" />
-                  </Pressable>
-                </View>
-                {/* TOTAL */}
-                <View style={{ marginTop: 20 }}>
-                  <DataTable
-                    style={{
-                      backgroundColor: "white",
-                      borderRadius: 5,
-                      marginBottom: 30,
-                    }}
-                  >
-                    <DataTable.Row>
-                      <DataTable.Title>Total Produits</DataTable.Title>
-                      <DataTable.Title numeric>{cartCount}</DataTable.Title>
-                    </DataTable.Row>
-                    <DataTable.Row>
-                      <DataTable.Title>Sous-Total (Dh)</DataTable.Title>
-                      <DataTable.Title numeric>{subTotal} </DataTable.Title>
-                    </DataTable.Row>
-                    <DataTable.Row>
-                      <DataTable.Title>Sous-Total (Dh)</DataTable.Title>
-                      <DataTable.Title numeric>{subTotal} </DataTable.Title>
-                    </DataTable.Row>
-                  </DataTable>
-
-                  <PrimaryButton
-                    onEventHandler={() => {
-                      navigation.navigate("RegisterScreen");
-                    }}
-                    title="Valider mon Panier"
+  if (cartCount) {
+    return (
+      <View style={{ flex: 1 }}>
+        <BottomNavBar />
+        <ScrollView>
+          <SafeAreaView>
+            <View style={{ padding: 15 }}>
+              <View style={{ marginTop: 20 }}>
+                {cart?.items?.map(({ product }) => {
+                  return (
+                    <ProductListCard
+                      key={product.id}
+                      navigation={navigation}
+                      product={product}
+                    />
+                  );
+                })}
+              </View>
+              {/* code promo */}
+              <View style={{ marginTop: 20 }}>
+                <TextInput
+                  style={styles.codePromo}
+                  label="Code promo"
+                  value=""
+                  placeholder="XC123FV"
+                  onChangeText={(text) => {}}
+                  mode="outlined"
+                  theme={MD3LightTheme}
+                />
+                <View style={{ position: "absolute", right: 2, top: 8 }}>
+                  <PressableButton
+                    fontWeight="Bold"
+                    type="default"
+                    children="Valider"
                   />
                 </View>
               </View>
-            </SafeAreaView>
-          </ScrollView>
+              {/* TOTAL */}
+              <View style={{ marginTop: 20 }}>
+                <DataTable
+                  style={{
+                    backgroundColor: "white",
+                    borderRadius: 5,
+                    marginBottom: 30,
+                  }}
+                >
+                  <DataTable.Row>
+                    <DataTable.Title>Total Produits</DataTable.Title>
+                    <DataTable.Title numeric>{cartCount}</DataTable.Title>
+                  </DataTable.Row>
+                  <DataTable.Row>
+                    <DataTable.Title>Sous-Total (Dh)</DataTable.Title>
+                    <DataTable.Title numeric>{subTotal} </DataTable.Title>
+                  </DataTable.Row>
+                  <DataTable.Row>
+                    <DataTable.Title>Sous-Total (Dh)</DataTable.Title>
+                    <DataTable.Title numeric>{subTotal} </DataTable.Title>
+                  </DataTable.Row>
+                </DataTable>
+
+                <PressableButton
+                  type="primary"
+                  fontWeight="Bold"
+                  children="Valider mon Panier"
+                  onPress={() => {
+                    navigation.navigate("CheckoutScreen");
+                  }}
+                />
+              </View>
+            </View>
+            <Spacer size={100} />
+          </SafeAreaView>
+        </ScrollView>
+      </View>
+    );
+  }
+  return (
+    <Portal>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          flexDirection: "column",
+          backgroundColor: "white",
+        }}
+      >
+        <View style={{ alignItems: "center", height: deviceHeight / 3 }}>
+          <Icon size={100} source="shopping" />
+          <Typography size={24} fontWeight="Medium">
+            Votre panier est Vide :(
+          </Typography>
+          <Spacer size={39} />
+          <PressableButton
+            children="Continuer vos achats"
+            onPress={() => navigation?.navigate("HomeScreen")}
+            fontWeight="Bold"
+            type="default"
+          />
         </View>
-      )}
-    </View>
+      </View>
+    </Portal>
   );
 }
 

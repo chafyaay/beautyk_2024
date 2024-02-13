@@ -4,12 +4,10 @@ import { OrderDetails } from "./OrderDetails";
 import { PayementOptions } from "./PayementOptions";
 import { useEffect, useState } from "react";
 import { deviceWidth } from "../../utils/device";
-import { ActivityIndicator, Button, MD2Colors } from "react-native-paper";
 import { OrderProps } from "../../utils/models";
 import { useSelector } from "react-redux";
 import { CREATE_ORDER } from "../../utils/api-calls";
-import Header from "../../components/Header/Header";
-import { PrimaryButton } from "../../components/UI/Buttons";
+import { PressableButton } from "../../components/UI/Buttons";
 
 export default function CheckoutScreen({ navigation }) {
   const [customerDetails, setCustomerDetails] = useState({}) as any;
@@ -42,8 +40,6 @@ export default function CheckoutScreen({ navigation }) {
     let orderData: OrderProps = {
       payment_method: "",
       payment_method_title: "",
-      set_paid: false,
-      password: "",
       billing: {
         phone,
         first_name,
@@ -55,6 +51,7 @@ export default function CheckoutScreen({ navigation }) {
         postcode: "",
         country: "",
         email,
+        company: "",
       },
       shipping: {
         first_name,
@@ -65,6 +62,8 @@ export default function CheckoutScreen({ navigation }) {
         state: "",
         postcode: "",
         country: "",
+        company: "",
+        phone: "",
       },
       line_items: line_items,
       shipping_lines: [
@@ -72,8 +71,54 @@ export default function CheckoutScreen({ navigation }) {
           method_id: shippingMethod?.slug,
           method_title: shippingMethod?.description,
           total: shippingMethod?.name,
+          taxes: null,
         },
       ],
+      id: 0,
+      parent_id: 0,
+      status: "",
+      currency: "",
+      version: "",
+      prices_include_tax: false,
+      date_created: "",
+      date_modified: "",
+      discount_total: "",
+      discount_tax: "",
+      shipping_total: "",
+      shipping_tax: "",
+      cart_tax: "",
+      total: "",
+      total_tax: "",
+      customer_id: 0,
+      order_key: "",
+      transaction_id: "",
+      customer_ip_address: "",
+      customer_user_agent: "",
+      created_via: "",
+      customer_note: "",
+      date_completed: undefined,
+      date_paid: undefined,
+      cart_hash: "",
+      number: "",
+      meta_data: [],
+      tax_lines: [],
+      fee_lines: [],
+      coupon_lines: [],
+      refunds: [],
+      payment_url: "",
+      is_editable: true,
+      needs_payment: false,
+      needs_processing: true,
+      date_created_gmt: "",
+      date_modified_gmt: "",
+      date_completed_gmt: undefined,
+      date_paid_gmt: undefined,
+      currency_symbol: "",
+      _links: {
+        self: [],
+        collection: [],
+        customer: [],
+      },
     };
     setIsloading(true);
     const response = await CREATE_ORDER(orderData);
@@ -83,20 +128,8 @@ export default function CheckoutScreen({ navigation }) {
     }
   };
 
-  useEffect(() => {
-    navigation.setOptions({
-      headerShown: false,
-    });
-  }, []);
-
   return (
     <View style={{ backgroundColor: "white" }}>
-      <Header
-        showCart={false}
-        navigation={navigation}
-        title={"Valider votre commande"}
-        search={false}
-      />
       <SafeAreaView>
         <ScrollView>
           <View style={{ padding: 15, paddingBottom: 160 }}>
@@ -124,10 +157,12 @@ export default function CheckoutScreen({ navigation }) {
             padding: 20,
           }}
         >
-          <PrimaryButton
+          <PressableButton
+            type="primary"
             disabled={!isformvalid}
-            onEventHandler={submitOrderHandler}
-            title="Valider votre commande"
+            onPress={submitOrderHandler}
+            children="Valider votre commande"
+            fontWeight="Bold"
           />
         </View>
       </SafeAreaView>

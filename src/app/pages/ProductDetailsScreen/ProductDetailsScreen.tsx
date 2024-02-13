@@ -1,13 +1,14 @@
-import { ScrollView, View, ImageBackground, Pressable } from "react-native";
+import { ScrollView, View, ImageBackground } from "react-native";
 import {
   Text,
   Badge,
-  IconButton,
   MD2Colors,
   Divider,
   Icon,
   SegmentedButtons,
   ActivityIndicator,
+  MD2DarkTheme,
+  MD2LightTheme,
 } from "react-native-paper";
 import React, { useEffect, useState } from "react";
 import { TEXT_COLOR, deviceWidth } from "../../utils/device";
@@ -18,28 +19,30 @@ import AddToCart from "../../components/AddToCart";
 import { ProductProps } from "../../utils/models";
 import { useQuery } from "react-query";
 import { GET_SHIPPING_MODES } from "../../utils/api-calls";
-import { RatingReview } from "../../components/RatingReview/RatingReview";
+import { ReviewList } from "../../components/Reviews/ReviewList";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Header from "../../components/Header/Header";
-import { PrimaryButton } from "../../components/UI/Buttons";
+import { PressableButton } from "../../components/UI/Buttons";
+import { TextHolder } from "../../components/UI/TextHolder";
+import {
+  InStockText,
+  PriceText,
+  SaleText,
+} from "../../components/Product/ProductCard/helpers";
+import { Typography } from "../../components/UI/Typography";
+import Spacer from "../../components/UI/Spacer";
 
 export default function ProductDetailsScreen({ route, navigation }) {
   const [shippingData, setShippingData] = useState([]);
   const [segmentedButtonsValue, setSegmentedButtonsValue] = useState("about");
-
-  const { cart } = useSelector((state: any) => state.cart) as any;
-  const quantity = cart?.items?.reduce((a, b) => (a += b?.quantity), 0);
 
   const product = route?.params?.product as ProductProps;
   const {
     name,
     description,
     images,
-    price_html,
     price,
     regular_price,
     sale_price,
-    stock_status,
     on_sale,
     short_description,
   } = product;
@@ -50,38 +53,14 @@ export default function ProductDetailsScreen({ route, navigation }) {
   );
 
   useEffect(() => {
-    navigation.setOptions({
-      title: "",
-      headerShown: false,
-      headerRight: () => (
-        <>
-          {!!quantity && (
-            <Pressable
-              onPress={() => {
-                navigation.navigate("CartScreen");
-              }}
-            >
-              <IconButton icon={"cart"}></IconButton>
-              <Badge style={{ position: "absolute", right: 5, top: 3 }}>
-                {quantity}
-              </Badge>
-            </Pressable>
-          )}
-        </>
-      ),
-    });
-  }, [quantity]);
-
-  useEffect(() => {
     setShippingData(data);
   }, [data]);
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
-      <Header search={false} showCart navigation={navigation} title={""} />
       <ScrollView>
         <SafeAreaView>
-          <View style={{ padding: 15 }}>
+          <View style={{ padding: 15, paddingBottom: 100 }}>
             <Carousel
               layout="default"
               autoplay
@@ -91,6 +70,10 @@ export default function ProductDetailsScreen({ route, navigation }) {
                 const { item } = props;
                 return (
                   <>
+                    <SaleText
+                      regular_price={product.regular_price}
+                      sale_price={product.sale_price}
+                    />
                     <ImageBackground
                       resizeMode="contain"
                       style={{
@@ -108,21 +91,10 @@ export default function ProductDetailsScreen({ route, navigation }) {
             />
 
             <Divider style={{ marginTop: 20, marginBottom: 10 }} />
-
-            <Text
-              style={{
-                textTransform: "capitalize",
-                color: MD2Colors.indigo500,
-                width: "100%",
-                textAlign: "left",
-              }}
-              numberOfLines={3}
-              variant="bodyLarge"
-            >
+            <Typography size={20} fontWeight="Medium" variant="headlineMedium">
               {name}
-            </Text>
+            </Typography>
 
-            {/* price */}
             <View
               style={{
                 marginTop: 10,
@@ -133,64 +105,13 @@ export default function ProductDetailsScreen({ route, navigation }) {
                 alignItems: "center",
               }}
             >
-              <View>
-                {!sale_price ? (
-                  <Text
-                    variant="titleMedium"
-                    style={{ fontWeight: "800", color: TEXT_COLOR.primary }}
-                  >
-                    {price} Dh
-                  </Text>
-                ) : (
-                  <>
-                    <Text
-                      variant="bodySmall"
-                      style={{
-                        color: TEXT_COLOR.default,
-                        textDecorationLine: "line-through",
-                      }}
-                    >
-                      {regular_price} Dh
-                    </Text>
-                    <Text
-                      variant="titleMedium"
-                      style={{ fontWeight: "800", color: TEXT_COLOR.primary }}
-                    >
-                      {sale_price} Dh
-                    </Text>
-                  </>
-                )}
-                {/* on sale  */}
-                {!!on_sale ? (
-                  <Badge
-                    theme={{ colors: { secondary: "green" } }}
-                    style={{
-                      position: "absolute",
-                      bottom: 3,
-                      right: -40,
-                      backgroundColor: MD2Colors.redA200,
-                    }}
-                    children={
-                      -Math.round(
-                        ((Number(regular_price) - Number(sale_price)) * 100) /
-                          Number(regular_price)
-                      ) + "%"
-                    }
-                  ></Badge>
-                ) : (
-                  ""
-                )}
-              </View>
-
-              <Text
-                variant="labelLarge"
-                style={{
-                  fontWeight: "800",
-                  color: MD2Colors.green400,
-                }}
-              >
-                {product.stock_status === "instock" ? "En stock" : "epuisé"}
-              </Text>
+              <PriceText
+                sale_price={product.sale_price}
+                price={product.price}
+                cardView={undefined}
+                regular_price={product.regular_price}
+              />
+              <InStockText stock_status={product.stock_status} />
             </View>
 
             {/* Order choices */}
@@ -214,7 +135,7 @@ export default function ProductDetailsScreen({ route, navigation }) {
               }}
             >
               <Icon
-                color={MD2Colors.indigo300}
+                color={MD2Colors.black}
                 source={"truck-cargo-container"}
                 size={30}
               />
@@ -224,20 +145,26 @@ export default function ProductDetailsScreen({ route, navigation }) {
                 }}
               >
                 {!!isLoading ? (
-                  <ActivityIndicator color={MD2Colors.indigo300} size={17} />
+                  <ActivityIndicator color={MD2Colors.black} size={17} />
                 ) : (
                   shippingData?.map((item: any, index: number) => (
-                    <Text key={index} variant="labelSmall">
-                      - {item.description}
-                    </Text>
+                    <Typography variant="bodyMedium" key={index}>
+                      {"- " + item.description}
+                    </Typography>
                   ))
                 )}
               </View>
             </View>
+            <Spacer size={10} />
+
+            <PressableButton icon="whatsapp" fontWeight="Bold" type="whatsapp">
+              Commander via WhatsApp
+            </PressableButton>
 
             <Divider style={{ marginTop: 20, marginBottom: 20 }} />
 
             <SegmentedButtons
+              theme={MD2LightTheme}
               value={segmentedButtonsValue}
               onValueChange={setSegmentedButtonsValue}
               buttons={[
@@ -245,16 +172,20 @@ export default function ProductDetailsScreen({ route, navigation }) {
                   value: "about",
                   label: "Description",
                   showSelectedCheck: true,
+                  style: {},
                   labelStyle: {
                     fontSize: 12,
-                    color: MD2Colors.indigo400,
+                    borderRadius: 0,
                   },
                 },
                 {
                   value: "Specifications",
                   label: "Spécifications",
                   showSelectedCheck: true,
-                  labelStyle: { fontSize: 12, color: MD2Colors.indigo400 },
+                  labelStyle: {
+                    fontSize: 12,
+                    borderRadius: 0,
+                  },
                 },
                 {
                   value: "review",
@@ -262,13 +193,12 @@ export default function ProductDetailsScreen({ route, navigation }) {
                   showSelectedCheck: true,
                   labelStyle: {
                     fontSize: 12,
-                    color: MD2Colors.indigo400,
+                    borderRadius: 2,
                   },
 
                   style: {
                     columnGap: 1,
                     shadowRadius: 0,
-                    backgroundColor: "white",
                     shadowOpacity: 0,
                   },
                 },
@@ -291,26 +221,12 @@ export default function ProductDetailsScreen({ route, navigation }) {
                 />
               )}
               {segmentedButtonsValue === "review" && (
-                <RatingReview product={product} />
+                <ReviewList product={product} />
               )}
             </View>
           </View>
         </SafeAreaView>
       </ScrollView>
-      <View
-        style={{
-          position: "absolute",
-          width: "100%",
-          bottom: 30,
-          padding: 30,
-          paddingBottom: 0,
-        }}
-      >
-        <PrimaryButton
-          title="Commander via WhatsApp"
-          onEventHandler={() => {}}
-        />
-      </View>
     </View>
   );
 }

@@ -10,7 +10,7 @@ import {
 } from "react-native-paper";
 import { useEffect } from "react";
 import React from "react";
-import { $primaryBgColor, $primaryColor } from "../../utils/device";
+import { BG_LIGHT_COLOR, TEXT_COLOR } from "../../utils/device";
 
 export const PayementOptions: React.FC<{
   getPayementDetailsHandler: (details: any) => void;
@@ -35,13 +35,13 @@ export const PayementOptions: React.FC<{
         style={{
           paddingTop: 20,
           paddingBottom: 10,
-          color: MD2Colors.indigo500,
+          color: TEXT_COLOR.primary,
         }}
         variant="titleMedium"
       >
         Mode de Paiement
       </Text>
-      {!!isLoading && <ActivityIndicator color={$primaryColor} />}
+      {!!isLoading && <ActivityIndicator color={BG_LIGHT_COLOR.default} />}
       {!isLoading &&
         data?.map((item) => (
           <View

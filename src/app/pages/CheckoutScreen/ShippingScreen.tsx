@@ -107,8 +107,8 @@ export default function ShippingScreen({ navigation, route }) {
               handleBlur,
             }) => (
               <>
-                {Object.keys(shippingForm).map((input) => (
-                  <View>
+                {Object.keys(shippingForm).map((input, index) => (
+                  <View key={index}>
                     <TextInput
                       disabled={isLoading}
                       style={{ marginTop: 10 }}

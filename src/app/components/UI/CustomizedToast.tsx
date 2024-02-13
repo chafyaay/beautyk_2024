@@ -1,20 +1,11 @@
-import { View } from "react-native";
-import {
-  Button,
-  MD2Colors,
-  MD2LightTheme,
-  Avatar,
-  Card,
-  Divider,
-} from "react-native-paper";
-import Toast, { BaseToast } from "react-native-toast-message";
-import { DefaultButton, PrimaryButton } from "./Buttons";
-import {
-  BG_DARK_COLOR,
-  BG_LIGHT_COLOR,
-  TEXT_COLOR,
-  deviceWidth,
-} from "../../utils/device";
+import { ScrollView, View } from "react-native";
+import { MD2Colors, Avatar } from "react-native-paper";
+import Toast from "react-native-toast-message";
+
+import { PressableButton } from "./Buttons";
+import { deviceWidth, TEXT_COLOR } from "../../utils/device";
+import RenderHTML from "react-native-render-html";
+import { Typography } from "./Typography";
 
 export const CustomizedToast = () => {
   return (
@@ -27,102 +18,92 @@ export const CustomizedToast = () => {
                 padding: 10,
                 margin: 0,
                 width: deviceWidth - 20,
-                borderWidth: 3,
                 borderRadius: 8,
-                borderColor: BG_LIGHT_COLOR.a_error,
+                borderColor: MD2Colors.deepOrange500,
+                backgroundColor: MD2Colors.deepOrange100,
               }}
             >
-              <Card.Title
-                titleStyle={{ textAlign: "center", color: TEXT_COLOR.a_error }}
-                subtitleStyle={{ textAlign: "center", color: TEXT_COLOR.error }}
-                title={text1}
-                subtitle={text2}
-                left={() => (
-                  <Avatar.Icon
-                    size={36}
-                    {...props}
-                    style={{ backgroundColor: BG_LIGHT_COLOR.a_error }}
-                    icon="alert"
-                  />
-                )}
-              />
-
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
+              <RenderHTML
+                source={{
+                  html: `<p style="color:${TEXT_COLOR.error}" >${props.msg}</p>`,
                 }}
-              ></View>
+              />
             </View>
           );
         },
+
         success: ({ text1, text2, props }) => (
-          <BaseToast
-            text1={text1}
-            text2=""
-            {...props}
+          <View
             style={{
-              backgroundColor: MD2Colors.green500,
-              borderLeftColor: MD2Colors.green300,
+              padding: 10,
+              margin: 0,
+              width: deviceWidth - 20,
+              borderRadius: 8,
+              borderColor: MD2Colors.green100,
+              backgroundColor: MD2Colors.green400,
             }}
-            contentContainerStyle={{ paddingHorizontal: 15 }}
-            text1Style={{
-              fontSize: 15,
-              fontWeight: "600",
-              textAlign: "center",
-              color: "white",
-            }}
-          />
+          >
+            <Typography
+              fontWeight="SemiBold"
+              align="center"
+              color={MD2Colors.white}
+              children={props?.msg?.replace(/<[^>]*>?/gm, "")}
+            />
+          </View>
         ),
         updatedcart: ({ text1, text2, onPress, hide, show, props }) => {
           return (
             <View
               style={{
-                padding: 0,
-                margin: 0,
-                width: deviceWidth,
+                width: deviceWidth - 20,
                 borderWidth: 3,
                 borderRadius: 8,
-                borderColor: BG_DARK_COLOR.default,
+                borderColor: MD2Colors.green500,
+                backgroundColor: "white",
+                justifyContent: "space-between",
+                padding: 10,
+                alignItems: "center",
               }}
             >
-              <Card theme={MD2LightTheme}>
-                <Avatar.Icon
-                  size={20}
-                  {...props}
-                  style={{ backgroundColor: BG_DARK_COLOR.default }}
-                  icon="check"
-                />
-                <Card.Title
-                  titleStyle={{ textAlign: "center" }}
-                  subtitleStyle={{ textAlign: "center" }}
-                  title={text1}
-                  subtitle={text2}
-                />
+              <Avatar.Icon
+                size={40}
+                {...props}
+                style={{ backgroundColor: MD2Colors.green500 }}
+                icon="check"
+              />
+              <Typography fontWeight="Bold" children={text1} />
+              <Typography fontWeight="Medium" children={text2} />
 
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  width: "100%",
+                  columnGap: 10,
+                }}
+              >
+                <PressableButton
+                  fontWeight="Bold"
+                  children={"Continuer vos achats"}
+                  onPress={() => {
+                    hide();
                   }}
-                >
-                  <DefaultButton
-                    title={"Continuer vos achats"}
-                    onEventHandler={() => {
-                      props.cart();
-                      hide();
-                    }}
-                  />
+                  disabled={undefined}
+                  type={"primary"}
+                  fullwidth
+                />
 
-                  <PrimaryButton
-                    onEventHandler={() => {
-                      props.home();
-                      hide();
-                    }}
-                    title="Panier"
-                  />
-                </View>
-              </Card>
+                <PressableButton
+                  fontWeight="Bold"
+                  onPress={() => {
+                    props.cart();
+                    hide();
+                  }}
+                  children="Panier"
+                  type="default"
+                  fullwidth
+                />
+              </View>
             </View>
           );
         },

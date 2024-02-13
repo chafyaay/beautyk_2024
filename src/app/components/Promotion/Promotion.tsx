@@ -7,19 +7,24 @@ import {
   ActivityIndicator,
 } from "react-native";
 import Carousel from "react-native-snap-carousel";
-import { GET_BANNER_BY_SECTION, GET_CATEGORIES } from "../../utils/api-calls";
 import { useQuery } from "react-query";
 import { deviceWidth } from "../../utils/device";
 import { MD2Colors } from "react-native-paper";
+import { Skelton } from "../UI/Skelton";
+import { useNavigation } from "@react-navigation/native";
+import { useSelector } from "react-redux";
 
-export default function Promotion({ data }) {
+export default function Promotion() {
+  const navigation = useNavigation() as any;
+  const { homeData } = useSelector((state: any) => state);
+  const data = homeData.promotion;
+
   const _renderItem = ({ item, index }) => {
     return (
       <View
         style={{
           width: deviceWidth,
-          height: 200,
-          padding: 10,
+          height: "auto",
           flexDirection: "row",
           justifyContent: "center",
           alignItems: "center",
@@ -36,9 +41,12 @@ export default function Promotion({ data }) {
                 bottom: 10,
                 zIndex: 1,
                 margin: "auto",
-
                 width: deviceWidth / 3,
                 borderRadius: 5,
+                backgroundColor: "black",
+              }}
+              onPress={() => {
+                navigation?.navigate("ProductListScreen", { ...item });
               }}
             >
               <Text
@@ -48,8 +56,14 @@ export default function Promotion({ data }) {
               </Text>
             </Pressable>
             <ImageBackground
-              style={{ width: 367, height: 167 }}
-              resizeMode="contain"
+              style={{
+                width: deviceWidth,
+                height: 167,
+                overflow: "hidden",
+                backgroundColor: "gold",
+              }}
+              imageStyle={{ width: deviceWidth + 20, marginLeft: -10 }}
+              resizeMode="cover"
               source={{
                 uri: item.image?.src,
               }}
@@ -60,44 +74,18 @@ export default function Promotion({ data }) {
     );
   };
 
-  return (
-    <Carousel
-      onTouchEnd={(e) => {
-        console.log(e);
-      }}
-      onTouchMove={(e) => {
-        console.log(e.target);
-      }}
-      layout="default"
-      autoplay
-      pagingEnabled
-      hasParallaxImages
-      data={data}
-      renderItem={_renderItem}
-      sliderWidth={deviceWidth}
-      itemWidth={deviceWidth}
-    />
-  );
+  if (data?.length > 0)
+    return (
+      <Carousel
+        layout="default"
+        autoplay
+        pagingEnabled
+        hasParallaxImages
+        data={data}
+        renderItem={_renderItem}
+        sliderWidth={deviceWidth}
+        itemWidth={deviceWidth}
+      />
+    );
+  else return <Skelton type="CAROUSEL" />;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    height: "auto",
-    alignContent: "center",
-    alignItems: "center",
-    backgroundColor: "#EEEccc",
-    paddingTop: 10,
-  },
-  row: {
-    flexDirection: "row",
-    flexWrap: "nowrap",
-  },
-  input: {
-    width: 200,
-    height: 50,
-    borderRadius: 3,
-    borderWidth: 2,
-    borderColor: "#CCC",
-  },
-});

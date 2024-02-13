@@ -4,6 +4,8 @@ export const SET_TOKEN = "user/SET_TOKEN";
 export const GET_TOKEN = "user/GET_TOKEN";
 export const SET_CUSTOMER = "user/SET_CUSTOMER";
 export const GET_CUSTOMER = "user/GET_CUSTOMER";
+export const LOG_OUT = "user/LOG_OUT";
+export const SET_ORDERS = "user/SET_ORDERS";
 
 export const setToken = (token) => {
   return {
@@ -17,6 +19,10 @@ export const getToken = () => {
     type: GET_TOKEN,
   };
 };
+
+export const logOut = () => ({
+  type: LOG_OUT,
+});
 
 export const setUser = (data) => {
   return {
@@ -34,6 +40,12 @@ export const setCustomer = (data) => {
     data,
   };
 };
+
+export const setOrders = (data) => ({
+  type: SET_ORDERS,
+  data,
+});
+
 export const getCustomer = () => ({
   type: GET_CUSTOMER,
 });

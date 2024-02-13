@@ -1,8 +1,10 @@
 import { ImageBackground, Pressable, StyleSheet, View } from "react-native";
 import AddToCart from "../AddToCart";
-import { MD2Colors, Text } from "react-native-paper";
+import { Card, MD2Colors, Text } from "react-native-paper";
 import { ProductProps } from "../../utils/models";
 import { TEXT_COLOR, deviceWidth } from "../../utils/device";
+import { Typography } from "../UI/Typography";
+import DataIndex from "../../utils/DataIndex";
 
 interface ProductCardProps {
   product: ProductProps;
@@ -17,7 +19,7 @@ export const ProductListCard: React.FC<ProductCardProps> = ({
 }) => {
   const { price, regular_price, sale_price } = product;
 
-  return (
+  const _return = (
     <Pressable
       onPress={() => navigation?.navigate("ProductDetailsScreen")}
       style={
@@ -39,7 +41,7 @@ export const ProductListCard: React.FC<ProductCardProps> = ({
           source={{
             uri: product?.images[0]?.src,
           }}
-          resizeMode="contain"
+          resizeMode="cover"
           imageStyle={{ width: "100%" }}
           style={styles.cover}
         />
@@ -48,37 +50,19 @@ export const ProductListCard: React.FC<ProductCardProps> = ({
       <View
         style={type !== "c" ? styles.body : { width: "75%", paddingLeft: 10 }}
       >
-        <Text
-          variant="bodySmall"
+        <Typography
+          fontWeight="Regular"
           numberOfLines={2}
-          style={{
-            paddingRight: 30,
-            marginTop: 10,
-            color: MD2Colors.indigo800,
-          }}
-        >
-          {product?.name}
-        </Text>
+          children={product?.name}
+        />
 
-        <View>
+        <View style={{ marginTop: 5 }}>
           {!sale_price ? (
-            <Text variant="titleMedium" style={{ color: TEXT_COLOR.body }}>
-              {price} Dh
-            </Text>
+            <Typography>{price} Dh</Typography>
           ) : (
             <>
-              <Text
-                variant="bodySmall"
-                style={{
-                  color: TEXT_COLOR.body,
-                  textDecorationLine: "line-through",
-                }}
-              >
-                {regular_price} Dh
-              </Text>
-              <Text variant="titleMedium" style={{ color: TEXT_COLOR.body }}>
-                {sale_price} Dh
-              </Text>
+              <Typography>{regular_price} Dh</Typography>
+              <Typography>{sale_price} Dh</Typography>
             </>
           )}
         </View>
@@ -109,28 +93,75 @@ export const ProductListCard: React.FC<ProductCardProps> = ({
       </View>
     </Pressable>
   );
+
+  return (
+    <View style={styles.container}>
+      <Card.Cover
+        style={{ height: 60, width: 60, backgroundColor: "yellow" }}
+        source={{
+          uri: product?.images[0]?.src,
+        }}
+      />
+      <Typography
+        fontWeight="Regular"
+        numberOfLines={1}
+        children={product?.name}
+        style={{ flex: 1 }}
+      />
+      <View
+        style={{ marginTop: 5, position: "absolute", left: 80, bottom: 10 }}
+      >
+        {!sale_price ? (
+          <Typography type="default" size={14} fontWeight="Regular">
+            {price + " " + DataIndex.currency}
+          </Typography>
+        ) : (
+          <View style={{ flexDirection: "row", columnGap: 10 }}>
+            <Typography type="default" fontWeight="Bold">
+              {sale_price + " " + DataIndex.currency}
+            </Typography>
+            <Typography
+              color={MD2Colors.grey500}
+              style={{ textDecorationLine: "line-through" }}
+              fontWeight="Bold"
+            >
+              {regular_price + " " + DataIndex.currency}
+            </Typography>
+          </View>
+        )}
+      </View>
+      <View style={{ position: "absolute", right: 0, bottom: 0 }}>
+        <AddToCart
+          showDeleteIcon={type !== "c"}
+          isCartPage
+          product={product}
+          navigation={navigation}
+        />
+      </View>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
   container: {
     justifyContent: "flex-start",
     flexDirection: "row",
-    alignItems: "center",
-    borderColor: TEXT_COLOR.body,
-    borderWidth: 1,
-    borderRadius: 3,
+    padding: 5,
+    borderRadius: 5,
     marginBottom: 5,
     width: "100%",
-    height: 100,
-    backgroundColor: "white",
+    maxHeight: 80,
+    backgroundColor: MD2Colors.white,
+    shadowColor: "#171717",
+    shadowOffset: { width: -2, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 3,
+    columnGap: 10,
   },
   cover: {
-    width: 100,
-    height: 70,
-    padding: 10,
+    width: 80,
+    height: 80,
     marginRight: "3%",
-    borderRightColor: TEXT_COLOR.body,
-    borderRightWidth: 1,
   },
   body: {
     width: deviceWidth - 145,

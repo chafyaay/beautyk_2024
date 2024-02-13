@@ -1,3 +1,5 @@
+import { number, string } from "prop-types";
+
 export interface ProductProps {
   id: number;
   name: string;
@@ -27,7 +29,7 @@ export interface ProductProps {
   total_sales: 0;
   virtual: boolean;
   downloadable: boolean;
-  downloads: [];
+  downloads: any[];
   download_limit: -1;
   download_expiry: -1;
   external_url: string;
@@ -55,8 +57,8 @@ export interface ProductProps {
   average_rating: string;
   rating_count: 0;
 
-  upsell_ids: [];
-  cross_sell_ids: [];
+  upsell_ids: any[];
+  cross_sell_ids: any[];
   parent_id: 0;
   purchase_note: string;
   categories: [
@@ -66,7 +68,7 @@ export interface ProductProps {
       slug: string;
     }
   ];
-  tags: [];
+  tags: any[];
   image: { src: string };
   images: [
     {
@@ -80,12 +82,12 @@ export interface ProductProps {
       alt: string;
     }
   ];
-  attributes: [];
-  default_attributes: [];
-  variations: [];
-  grouped_products: [];
+  attributes: any[];
+  default_attributes: any[];
+  variations: any[];
+  grouped_products: any[];
   menu_order: 0;
-  meta_data: [];
+  meta_data: any[];
   _links: {
     self: [
       {
@@ -101,30 +103,20 @@ export interface ProductProps {
 }
 
 export interface CustomersProps {
+  id: number;
+  date_created: string;
+  date_created_gmt: string;
+  date_modified: string;
+  date_modified_gmt: string;
   email: string;
   first_name: string;
   last_name: string;
+  role: string;
   username: string;
-  shipping: {
+  billing: {
     first_name: string;
     last_name: string;
-    address_1: string;
-    address_2: string;
-    city: string;
-    state: string;
-    postcode: string;
-    phone: string;
-  };
-}
-
-export interface OrderProps {
-  payment_method: string;
-  payment_method_title: string;
-  set_paid: boolean;
-  password: string;
-  billing?: {
-    first_name: string;
-    last_name: string;
+    company: string;
     address_1: string;
     address_2: string;
     city: string;
@@ -137,6 +129,7 @@ export interface OrderProps {
   shipping: {
     first_name: string;
     last_name: string;
+    company: string;
     address_1: string;
     address_2: string;
     city: string;
@@ -144,15 +137,152 @@ export interface OrderProps {
     postcode: string;
     country: string;
   };
+  is_paying_customer: boolean;
+  avatar_url: string;
+  meta_data: any[];
+  _links: {
+    self: {
+      href: string;
+    }[];
+    collection: {
+      href: string;
+    }[];
+  };
+}
+
+export interface OrderProps {
+  id: number;
+  parent_id: number;
+  status: string;
+  currency: string;
+  version: string;
+  prices_include_tax: false;
+  date_created: string;
+  date_modified: string;
+  discount_total: string;
+  discount_tax: string;
+  shipping_total: string;
+  shipping_tax: string;
+  cart_tax: string;
+  total: string;
+  total_tax: string;
+  customer_id: number;
+  order_key: string;
+  billing: {
+    first_name: string;
+    last_name: string;
+    company: string;
+    address_1: string;
+    address_2: string;
+    city: string;
+    state: string;
+    postcode: string;
+    country: string;
+    email: string;
+    phone: string;
+  };
+  shipping: {
+    first_name: string;
+    last_name: string;
+    company: string;
+    address_1: string;
+    address_2: string;
+    city: string;
+    state: string;
+    postcode: string;
+    country: string;
+    phone: string;
+  };
+  payment_method: string;
+  payment_method_title: string;
+  transaction_id: string;
+  customer_ip_address: string;
+  customer_user_agent: string;
+  created_via: string;
+  customer_note: string;
+  date_completed: any;
+  date_paid: any;
+  cart_hash: string;
+  number: string;
+  meta_data: {
+    id: number;
+    key: string;
+    value: string;
+  }[];
   line_items: {
+    id: number;
+    name: string;
     product_id: number;
+    variation_id: number;
     quantity: number;
-  }[];
-  shipping_lines: {
-    method_id: string;
-    method_title: string;
+    tax_class: string;
+    subtotal: string;
+    subtotal_tax: string;
     total: string;
+    total_tax: string;
+    taxes: any[];
+    meta_data: any[];
+    sku: string;
+    price: number;
+    image: {
+      id: string;
+      src: string;
+    };
+    parent_name: any;
   }[];
+  tax_lines: any[];
+  shipping_lines: {
+    id?: number;
+    method_title?: string;
+    method_id?: string;
+    instance_id?: string;
+    total?: string;
+    total_tax?: string;
+    taxes?: any[];
+    meta_data?: {
+      id?: number;
+      key?: string;
+      value?: string;
+      display_key?: string;
+      display_value?: string;
+    }[];
+  }[];
+  fee_lines: any[];
+  coupon_lines: any[];
+  refunds: any[];
+  payment_url: string;
+  is_editable: true;
+  needs_payment: false;
+  needs_processing: true;
+  date_created_gmt: string;
+  date_modified_gmt: string;
+  date_completed_gmt: any;
+  date_paid_gmt: any;
+  currency_symbol: string;
+  _links: {
+    self: {
+      href: string;
+    }[];
+    collection: {
+      href: string;
+    }[];
+    customer: {
+      href: string;
+    }[];
+  };
+}
+
+export interface Review {
+  id: number;
+  date_created: string;
+  date_created_gmt: string;
+  product_id;
+  status: string;
+  reviewer: string;
+  reviewer_email: string;
+  review: string;
+  rating: number;
+  verified: boolean;
 }
 
 export const cities = [

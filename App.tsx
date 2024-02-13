@@ -6,6 +6,7 @@ import { CustomizedToast } from "./src/app/components/UI/CustomizedToast";
 import { PersistGate } from "redux-persist/integration/react";
 import { View } from "react-native";
 import { Routing } from "./src/app/routing/Routing";
+import BottomNavBar from "./src/app/components/BottomNavBar/BottomNavBar";
 
 const theme = {
   ...DefaultTheme,

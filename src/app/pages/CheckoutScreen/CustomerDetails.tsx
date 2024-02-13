@@ -19,6 +19,7 @@ import { Formik } from "formik";
 import { Separator } from "../../components/commun/Separator";
 import { CustomerInput } from "../../components/UI/CustomerInput";
 import { BG_DARK_COLOR } from "../../utils/device";
+import { TextField } from "../../components/UI/TextField";
 
 let initialFormInputs = {
   first_name: "",
@@ -116,22 +117,16 @@ export const CustomerDetails: React.FC<{
           isValid,
         }) => (
           <View>
-            {Object.keys(initialFormInputs).map((input) => (
-              <>
-                <TextInput
-                  style={{
-                    marginBottom: 5,
-                    fontSize: 14,
-                  }}
-                  mode="outlined"
-                  theme={MD3LightTheme}
+            {Object.keys(initialFormInputs).map((input, index) => (
+              <View key={index}>
+                <TextField
                   label={getFormLabel(input)}
-                  onChangeText={handleChange(input)}
-                  onSelectionChange={(e) => {
+                  handleChange={handleChange(input)}
+                  /*  onSelectionChange={(e) => {
                     onValidateForm();
                     getCustomerDetailsHandler(values);
-                  }}
-                  onBlur={handleBlur(input)}
+                  }} */
+                  handleBlur={handleBlur(input)}
                   value={values[input]}
                 />
                 {touched[input] && errors[input] && (
@@ -139,7 +134,7 @@ export const CustomerDetails: React.FC<{
                     {errors[input] as any}
                   </Text>
                 )}
-              </>
+              </View>
             ))}
           </View>
         )}

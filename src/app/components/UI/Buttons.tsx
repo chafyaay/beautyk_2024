@@ -1,76 +1,158 @@
-import { ActivityIndicator, Button, Icon, Text } from "react-native-paper";
+import {
+  ActivityIndicator,
+  Button,
+  Icon,
+  MD2Colors,
+  Text,
+} from "react-native-paper";
+import { Children } from "react";
+import { useFonts } from "@expo-google-fonts/raleway/useFonts";
+import { Pressable, StyleProp, StyleSheet, View } from "react-native";
+import { Typography } from "./Typography";
 
-import { onClearCart } from "../../utils/store/actions/cart.actions";
-import { Pressable } from "react-native";
-import { BG_LIGHT_COLOR, TEXT_COLOR, BG_DARK_COLOR } from "../../utils/device";
-
-export const PrimaryButton: React.FC<{
-  title: any;
-  onEventHandler?: () => void;
+export const PressableButton: React.FC<{
+  children: any;
+  onPress?: () => void;
   disabled?: boolean;
   isLoading?: boolean;
-}> = ({ disabled, isLoading, onEventHandler, title }) => (
-  <Button
-    disabled={disabled}
-    buttonColor={disabled ? BG_LIGHT_COLOR?.disabled : BG_DARK_COLOR?.default}
-    textColor={disabled ? TEXT_COLOR?.disabled : BG_DARK_COLOR?.primary}
-    mode="contained"
-    onPress={onEventHandler}
-  >
-    {title} {!!isLoading && <ActivityIndicator size={15} />}
-  </Button>
-);
+  fullwidth?: boolean;
+  type?:
+    | "primary"
+    | "default"
+    | "outlined"
+    | "disabled"
+    | "whatsapp"
+    | "Link"
+    | "menu";
+  size?: number;
+  fontWeight?: "Light" | "Medium" | "Regular" | "SemiBold" | "Bold";
+  icon?: string;
+  align?: "center" | "flex-start" | "flex-end";
+  style?: any;
+}> = ({
+  children,
+  onPress,
+  type,
+  size,
+  fontWeight,
+  disabled,
+  isLoading,
+  fullwidth,
+  icon,
+  align,
+  style,
+}) => {
+  const getTextColor = () => {
+    switch (type) {
+      case "disabled":
+        return MD2Colors.grey700;
+      case "primary":
+      case "whatsapp":
+        return MD2Colors.white;
+      default:
+        return MD2Colors.black;
+    }
+  };
 
-export const DefaultButton = ({ disabled, onEventHandler, title }) => (
-  <Button
-    disabled={disabled}
-    buttonColor={disabled ? BG_LIGHT_COLOR?.disabled : BG_DARK_COLOR?.default}
-    textColor={disabled ? TEXT_COLOR?.disabled : BG_DARK_COLOR?.primary}
-    mode="contained"
-    onPress={onEventHandler}
-  >
-    {title}
-  </Button>
-);
-
-export const LinkButton = ({ onEventHandler, title, icon }) => (
-  <Pressable
-    style={{
-      borderBottomColor: BG_LIGHT_COLOR?.disabled,
-      borderBottomWidth: 1,
-      padding: 10,
-      flexDirection: "row",
-      alignItems: "center",
-    }}
-    onPress={onEventHandler}
-  >
-    {icon && <Icon source={icon} size={20} />}
-    <Text
-      style={{ color: TEXT_COLOR?.body, paddingLeft: 10 }}
-      variant="titleSmall"
+  return (
+    <Pressable
+      style={[
+        styles[type],
+        {
+          justifyContent: align,
+          ...style,
+        },
+      ]}
+      onPress={onPress}
     >
-      {title}
-    </Text>
-  </Pressable>
-);
+      {Children.map(children, (child) => (
+        <>
+          {!!icon && (
+            <Icon
+              allowFontScaling
+              color={getTextColor()}
+              source={icon}
+              size={24}
+            />
+          )}
+          <Typography
+            align="center"
+            fontWeight={fontWeight}
+            color={getTextColor()}
+            size={size}
+          >
+            {child}
+          </Typography>
+          {!!isLoading && (
+            <ActivityIndicator
+              size={20}
+              style={{ position: "absolute", right: 10 }}
+              color={getTextColor()}
+            />
+          )}
+        </>
+      ))}
+    </Pressable>
+  );
+};
 
-export const ShowAllProductButton = ({ onEventHandler, title, icon }) => (
-  <Pressable
-    style={{
-      borderBottomColor: BG_LIGHT_COLOR?.disabled,
-      borderBottomWidth: 1,
-      padding: 10,
-      flexDirection: "row",
-      alignItems: "center",
-    }}
-    onPress={onEventHandler}
-  >
-    <Text
-      style={{ color: TEXT_COLOR?.default, paddingLeft: 10 }}
-      variant="titleSmall"
-    >
-      Afficher tous
-    </Text>
-    {icon && <Icon source={icon} size={20} />}
-  </Pressable>
-);
+const styles = StyleSheet.create({
+  menu: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    columnGap: 10,
+  },
+  Link: {
+    borderRadius: 4,
+    backgroundColor: MD2Colors.grey100,
+    padding: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+  },
+  outlined: {
+    borderWidth: 2,
+    borderColor: "black",
+    padding: 10,
+    borderRadius: 4,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  primary: {
+    borderWidth: 2,
+    backgroundColor: "black",
+    padding: 10,
+    borderRadius: 4,
+  },
+  default: {
+    backgroundColor: MD2Colors.yellowA700,
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingTop: 10,
+    paddingBottom: 10,
+    borderRadius: 4,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+  },
+  disabled: {
+    backgroundColor: MD2Colors.grey200,
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingTop: 10,
+    paddingBottom: 10,
+    borderRadius: 4,
+  },
+
+  whatsapp: {
+    borderRadius: 4,
+    backgroundColor: MD2Colors.green500,
+    padding: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    shadowRadius: 60,
+    overflow: "hidden",
+  },
+});

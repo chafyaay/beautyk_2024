@@ -1,29 +1,13 @@
-import { useEffect, useState } from "react";
-import {
-  ImageBackground,
-  StatusBar,
-  StyleSheet,
-  TextInput,
-  View,
-} from "react-native";
-import {
-  ActivityIndicator,
-  Avatar,
-  Text,
-  Drawer,
-  Portal,
-  Divider,
-  MD2Colors,
-} from "react-native-paper";
-import { useDispatch, useSelector } from "react-redux";
-import { $bodyText, deviceHeight, deviceWidth } from "../../utils/device";
-import { GET_ORDERS } from "../../utils/api-calls";
-import { setCustomer, setUser } from "../../utils/store/actions/user.actions";
-import { DefaultButton, LinkButton } from "../../components/UI/Buttons";
-import { useQuery } from "react-query";
-import { Separator } from "../../components/commun/Separator";
+import { ImageBackground, StyleSheet, View } from "react-native";
 
-export const ProfileScreen = ({ navigation, onHideModal }) => {
+import { ProfileMenu, Welcome } from "../../components/MyProfile/ProfileMenu";
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { Separator } from "../../components/commun/Separator";
+import { GET_ORDERS } from "../../utils/api-calls";
+import { deviceWidth } from "../../utils/device";
+
+export const ProfileScreen = () => {
   const [orders, setOrders] = useState([]);
   const { customer, user } = useSelector((state: any) => state?.user) as any;
 
@@ -47,75 +31,30 @@ export const ProfileScreen = ({ navigation, onHideModal }) => {
       });
   }, [customer]);
 
-  const Welcome = ({ profile }) => {
-    const { email, first_name, last_name, avatar_url } = profile;
-    const styles = StyleSheet.create({
-      container: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-      },
-    });
-    return (
-      <View style={styles.container}>
-        <View>
-          <Text>Bonjour </Text>
-          <Text style={{ color: $bodyText }} variant="titleMedium">
-            {first_name + " " + last_name}
-          </Text>
-          <Text style={{ color: MD2Colors.blue300 }} variant="labelSmall">
-            {email}
-          </Text>
-        </View>
-
-        {!avatar_url ? (
-          <Avatar.Text
-            size={35}
-            label={
-              String(first_name).slice(0, 1).toUpperCase() +
-              String(last_name).slice(0, 1).toUpperCase()
-            }
-          />
-        ) : (
-          <Avatar.Image size={35} source={{ uri: avatar_url }} />
-        )}
-      </View>
-    );
-  };
-
-  const MyOrders = () => {
-    return (
-      <View>
-        <LinkButton
-          icon="basket-outline"
-          onEventHandler={() => {
-            onHideModal(false);
-            navigation.navigate("MyOrdersListScreen", { orders });
-          }}
-          title={`Mes Commandes (${orders?.length})`}
-        />
-        <LinkButton
-          icon="account-outline"
-          onEventHandler={() => {
-            onHideModal(false);
-          }}
-          title={`Mon compte`}
-        />
-      </View>
-    );
-  };
-
   return (
     <View style={styles.container}>
-      <Welcome profile={customer} />
+      <Welcome customer={customer} profile={customer} />
       <Separator size={20} />
-      <MyOrders />
+      <ProfileMenu isLoggedIn={!!user} ordersCount={orders.length} />
+      <ImageBackground
+        style={{
+          width: deviceWidth - 150,
+          height: deviceWidth - 150,
+          position: "absolute",
+          left: 15,
+          bottom: 15,
+          opacity: 0.35,
+        }}
+        source={{
+          uri: "https://orgaliving.com/wp-content/uploads/2024/01/zawa9a.png",
+        }}
+      ></ImageBackground>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {},
+  container: { flex: 1 },
   row: {
     flexDirection: "row",
     flexWrap: "nowrap",

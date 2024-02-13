@@ -6,6 +6,7 @@ import { ProductProps } from "../../utils/models";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { ProductListCard } from "../../components/Product/ProductListCard";
+import { TEXT_COLOR } from "../../utils/device";
 
 export const OrderDetails: React.FC<{
   city: string;
@@ -49,7 +50,7 @@ export const OrderDetails: React.FC<{
         style={{
           paddingTop: 20,
           paddingBottom: 10,
-          color: MD2Colors.indigo500,
+          color: TEXT_COLOR.primary,
         }}
         variant="titleMedium"
       >
@@ -69,16 +70,14 @@ export const OrderDetails: React.FC<{
             const product = item?.product as ProductProps;
 
             return (
-              <>
-                <DataTable.Row style={{ backgroundColor: "white" }}>
-                  <ProductListCard
-                    type="c"
-                    key={index}
-                    product={product}
-                    navigation={() => {}}
-                  />
-                </DataTable.Row>
-              </>
+              <DataTable.Row key={index} style={{ backgroundColor: "white" }}>
+                <ProductListCard
+                  type="c"
+                  key={index}
+                  product={product}
+                  navigation={() => {}}
+                />
+              </DataTable.Row>
             );
           })}
 
