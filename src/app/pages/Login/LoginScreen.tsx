@@ -1,22 +1,14 @@
 import { ImageBackground, StyleSheet, View } from "react-native";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { TEXT_COLOR, deviceHeight, deviceWidth } from "../../utils/device";
 import { PressableButton } from "../../components/UI/Buttons";
-import {
-  getToken,
-  getUserData,
-  setToken,
-} from "../../utils/store/actions/user.actions";
 import { connect } from "react-redux";
-import {
-  setAllProducts,
-  setProduct,
-} from "../../utils/store/actions/product.action";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { TextHolder } from "../../components/UI/TextHolder";
+
 import Spacer from "../../components/UI/Spacer";
 import LoginForm from "./LoginForm";
+import { Typography } from "../../components/UI/Typography";
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -29,56 +21,40 @@ const LoginScreen = () => {
 
   return (
     <View style={styles?.wrapcontainer}>
-      <SafeAreaView>
-        <View style={styles.container}>
-          <View
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-              width: "100%",
-            }}
-          >
-            <Spacer size={60} />
-            <ImageBackground
-              style={{
-                width: 160,
-                height: 100,
-                flexDirection: "row",
-                justifyContent: "center",
-              }}
-              imageStyle={{ width: 160, alignContent: "center" }}
-              resizeMode="center"
-              source={require("../../../../assets/beautyk-logo.png")}
-            />
-            <Spacer size={60} />
-            <>
-              <TextHolder
-                text="Se Connecter"
-                size={20}
-                weight="bold"
-                color={TEXT_COLOR.primary}
-              />
-              <Spacer size={15} />
-              <LoginForm />
-            </>
-          </View>
+      <Spacer size={100} />
+      <ImageBackground
+        style={{
+          width: 160,
+          height: 100,
+          flexDirection: "row",
+          justifyContent: "center",
+          flex: 1,
+        }}
+        imageStyle={{ width: 160, alignContent: "center" }}
+        resizeMode="center"
+        source={require("../../../../assets/beautyk-logo.png")}
+      />
 
-          <View style={styles.footer}>
-            <TextHolder
-              text="Pas encore inscrit ? "
-              color={TEXT_COLOR.primary}
-              type={"B"}
-              size={"s"}
-            />
-            <PressableButton
-              caption={"Créer un compte"}
-              onPress={undefined}
-              mode="contained"
-              type="default"
-            />
-          </View>
-        </View>
-      </SafeAreaView>
+      <View style={{ flex: 2, width: deviceWidth, padding: 25 }}>
+        <Typography
+          children="Se Connecter"
+          size={20}
+          fontWeight="Bold"
+          textTrasform={"uppercase"}
+        />
+        <Spacer size={10} />
+        <LoginForm />
+      </View>
+
+      <View style={[styles.footer, { flex: 1 }]}>
+        <Typography children="Pas encore inscrit ? " />
+        <PressableButton
+          children={"Créer un compte"}
+          onPress={undefined}
+          type="default"
+          fontWeight="Bold"
+        />
+      </View>
     </View>
   );
 };
@@ -98,8 +74,11 @@ const styles = StyleSheet.create({
     height: deviceHeight,
     width: deviceWidth,
     padding: 20,
+    alignItems: "center",
+    flex: 1,
   },
   container: {
+    flex: 1,
     height: "100%",
     alignItems: "center",
     justifyContent: "space-between",

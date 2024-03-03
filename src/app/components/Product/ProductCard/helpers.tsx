@@ -7,7 +7,12 @@ import { MD2Colors } from "react-native-paper";
 export const PriceText = ({ sale_price, price, cardView, regular_price }) => {
   let newPrice = (!!sale_price ? sale_price : price) as string;
   return (
-    <View>
+    <View
+      style={{
+        flexDirection: cardView === "LIST" ? "row" : "column",
+        columnGap: 10,
+      }}
+    >
       <Typography
         fontWeight="Bold"
         size={20}

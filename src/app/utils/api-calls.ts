@@ -63,14 +63,16 @@ export const loginApiCall = (data) => {
 
 export const getCustomerApiCall = (userId) =>
   WooCommerce.get(`customers?email=${userId}`)
-    .then((response) => response?.data)
+    .then((response) => response?.data[0])
     .catch((error) => error?.response?.data);
 
 export const getHomeDataApi = async (category: string) =>
   await WooCommerce.get(`products/categories?search=${category}`);
 
-export const getOrdersApi = async (customer: any) =>
-  await WooCommerce.get(`orders?customer=${customer}`);
+export const getOrdersApiCall = async (customer: any) =>
+  await WooCommerce.get(`orders?customer=${customer}`)
+    .then((response) => response.data)
+    .catch((error) => error.response.data);
 
 export const updateUserDetailsApi = (token: string, userId: any, user: any) => {
   return fetch(`${process.env.REACT_APP_API_ROOT}/users/${userId}`, {
@@ -99,6 +101,53 @@ export const allSettingOptions = () =>
   WooCommerce.get(`settings/general`)
     .then((response) => response.data)
     .catch((error) => error.response.data);
+
+export const getProductsTotals = async () =>
+  await WooCommerce.get("reports/products/totals")
+    .then((response) => response.data)
+    .catch((error) => error.response.data);
+
+export const getAllCategories = async () =>
+  await WooCommerce.get("reports")
+    .then((response) =>
+      response.data.filter((item) => item.slug === "categories/totals")
+    )
+    .catch((error) => error.response.data);
+
+export const updateCustomer = async (data) => {
+  return await WooCommerce.update(`customers/${data.id}/${data}`);
+};
+
+export const retrieveProducts = async (params: string) =>
+  await WooCommerce.get(`${params}`);
+
+export const deleteProduct = async (id) =>
+  await WooCommerce.delete(`products/${id}`);
+
+export const ListAllShippingMethodsApiCall = async () =>
+  await WooCommerce.get(`shipping_methods`)
+    .then((response) => response.data)
+    .catch((error) => error.response.data);
+
+export const get_payment_gateways = async () => {
+  return await WooCommerce.get("payment_gateways")
+    .then((response) => response.data)
+    .catch((error) => error.response.data);
+};
+
+export const createOrderApiCall = async (data: any) => {
+  return await WooCommerce.post(`orders`, data)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => error.response.data);
+};
+
+export const getProductsShippingModeApiCall = async () => {
+  return await WooCommerce.get("products/shipping_classes")
+    .then((response) => response.data)
+    .catch((error) => error.response.data);
+};
 
 /* ********************** */
 /* ********************** */
@@ -158,7 +207,7 @@ export const onSearchCAll = async (query: string, itemsPerPage: number) => {
 export const get_products_by_params = async (params: string) =>
   await WooCommerce.get(`${params}`);
 
-export const getReports = () => {
+export const getReportsApiCall = () => {
   return WooCommerce.get("reports/orders/totals")
     .then((response) => {
       return response.data;
@@ -195,16 +244,13 @@ export const deleteProductReviews = async (review_id) => {
 /* ----------------- */
 /* ----------------- */
 /* ----------------- */
-export const getProductsCall = async (
+/* export const getProductsCall = async (
   category_id: string,
   itemPerPgae: number,
   orderByIndex: number,
   pageNumber: number
 ) => {
-  /*  const filter = orderBy === "on_sale" ? "?on_sale=true" : `orderby=${orderBy}`;
-  const res = await WooCommerce.get(
-    `products?category=${category_id}&per_page=${itemPerPgae}&page=${pageNumber}`
-  ); */
+
   let params = "";
   switch (orderByIndex) {
     case 1:
@@ -270,11 +316,7 @@ export const GET_PRODUCTS = async (productId?: any, itemsPerPage?: number) => {
   return await WooCommerce.get(params);
 };
 
-export const GET_SHIPPING_MODES = async () => {
-  return await WooCommerce.get("products/shipping_classes")
-    .then((response) => response.data)
-    .catch((error) => error.response.data);
-};
+
 
 export const GET_ALL_PRODUCT_REVIEWS = async () => {
   return await WooCommerce.get(`products/reviews`)
@@ -330,3 +372,4 @@ export const GET_CUSTOMER = () => {
     .then((response) => response?.data)
     .catch((error) => error?.response?.data);
 };
+ */

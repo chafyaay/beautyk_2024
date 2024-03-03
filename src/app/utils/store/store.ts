@@ -1,17 +1,20 @@
 import { persistReducer, persistStore } from "redux-persist";
 import autoMergeLevel2 from "redux-persist/es/stateReconciler/autoMergeLevel2";
 import storage from "redux-persist/es/storage";
+import { configureStore } from "@reduxjs/toolkit";
 import rootReducer from "./reducers";
-import { createStore } from "redux";
 
 const persistConfig = {
   key: "root",
   storage: storage,
   stateReconciler: autoMergeLevel2,
-  //blacklist: ["visibilityFilter"]
 };
 
-const pReducer = persistReducer(persistConfig, rootReducer);
+const appReducer = persistReducer(persistConfig, rootReducer);
 
-export const store = createStore(pReducer);
+export const store = configureStore({
+  reducer: appReducer,
+});
 export const persistor = persistStore(store);
+
+export const cartState = (state) => state.cart;

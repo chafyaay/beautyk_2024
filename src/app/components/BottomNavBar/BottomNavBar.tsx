@@ -1,32 +1,18 @@
-import { View, StyleSheet, ImageBackground, Modal } from "react-native";
-import {
-  IconButton,
-  MD2Colors,
-  MD2DarkTheme,
-  Portal,
-  Text,
-} from "react-native-paper";
+import { View, StyleSheet, Pressable } from "react-native";
+import { Badge, Icon, MD2Colors } from "react-native-paper";
 import { useSelector } from "react-redux";
-import {
-  BG_COLOR,
-  TEXT_COLOR,
-  deviceHeight,
-  deviceWidth,
-} from "../../utils/device";
+import { deviceWidth } from "../../utils/device";
 
 import React, { useEffect, useState } from "react";
-import { ProfileScreen } from "../../pages/ProfileScreen/ProfileScreen";
-import Cart from "../Cart/Cart";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
 export default function BottomNavBar() {
   const [AppMenu, setAppMenu] = useState([]);
-  const [path, setPath] = useState("");
   const navigation = useNavigation() as any;
-  const route = useRoute() as any;
-  const { params } = useRoute() as any;
 
-  console.log(route);
+  const route = useRoute() as any;
+  const { cart } = useSelector((state) => state) as any;
+  const cartCount = cart?.items?.reduce((a, b) => (a += b.quantity), 0);
 
   const Menu = [
     {
@@ -45,9 +31,9 @@ export default function BottomNavBar() {
       action: () => navigation.navigate("ProfileScreen"),
     },
     {
-      _id: "MenuScreen",
+      _id: "MainMenuScreen",
       icon: "menu",
-      action: () => navigation.navigate("MenuScreen"),
+      action: () => navigation.navigate("MainMenuScreen"),
     },
   ];
 
@@ -57,14 +43,21 @@ export default function BottomNavBar() {
 
   return (
     <View style={styles.container}>
-      {AppMenu?.map(({ icon, action, _id }, id) => (
-        <IconButton
-          iconColor={route?.name === _id ? "red" : "green"}
-          key={id}
-          icon={icon}
-          onPress={action}
-        />
-      ))}
+      {AppMenu?.map(({ icon, action, _id }, id) => {
+        return (
+          <Pressable key={id} onPress={action} style={{ padding: 10 }}>
+            <Icon
+              color={route?.name === _id ? MD2Colors.black : MD2Colors.grey400}
+              key={id}
+              source={icon}
+              size={route?.name === _id ? 30 : 20}
+            />
+            {_id === "CartPage" && (
+              <Badge style={styles.badge}>{cartCount}</Badge>
+            )}
+          </Pressable>
+        );
+      })}
     </View>
   );
 }
@@ -80,7 +73,7 @@ const styles = StyleSheet.create({
     alignContent: "center",
     justifyContent: "center",
     width: deviceWidth - 20,
-    backgroundColor: MD2Colors.amber100,
+    backgroundColor: MD2Colors.amber50,
     borderRadius: 5,
     left: 10,
   },
@@ -93,5 +86,12 @@ const styles = StyleSheet.create({
     backgroundColor: MD2Colors.black,
     opacity: 0.79,
     borderRadius: 50,
+  },
+  badge: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    backgroundColor: MD2Colors.yellow600,
+    color: MD2Colors.black,
   },
 });

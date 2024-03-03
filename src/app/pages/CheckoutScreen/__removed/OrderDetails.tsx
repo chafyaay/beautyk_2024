@@ -1,12 +1,11 @@
 import { useQuery } from "react-query";
-import { GET_SHIPPING_MODES } from "../../utils/api-calls";
 import { View } from "react-native";
 import { MD2Colors, DataTable, Text } from "react-native-paper";
-import { ProductProps } from "../../utils/models";
+import { ProductProps } from "../../../utils/models";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { ProductListCard } from "../../components/Product/ProductListCard";
-import { TEXT_COLOR } from "../../utils/device";
+import { ProductListCard } from "../../../components/Product/ProductListCard";
+import { TEXT_COLOR } from "../../../utils/device";
 
 export const OrderDetails: React.FC<{
   city: string;

@@ -20,111 +20,130 @@ import {
   AutocompleteDropdown,
   AutocompleteDropdownContextProvider,
 } from "react-native-autocomplete-dropdown";
-import { Button, MD2Colors } from "react-native-paper";
+import { Button, MD2Colors, Searchbar } from "react-native-paper";
 import { deviceWidth } from "../../../utils/device";
-import { GET_PRODUCTS, GET_PRODUCTS_TOTAL } from "../../../utils/api-calls";
+import {
+  GET_PRODUCTS,
+  GET_PRODUCTS_TOTAL,
+  getProductsTotals,
+  retrieveProducts,
+} from "../../../utils/api-calls";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "react-query";
 import { ProductProps } from "../../../utils/models";
+import Toast from "react-native-toast-message";
+import { TextField } from "../../UI/TextField";
+import { Formik } from "formik";
+import { useFonts } from "@expo-google-fonts/raleway";
 
 export const SearchBarAutocomplet = memo(() => {
-  const [loading, setLoading] = useState(false);
-  const [suggestionsList, setSuggestionsList] = useState(null);
   const [searchQuery, setSearchQuery] = useState(null);
-  const [products, setProducts] = useState<ProductProps[]>();
-
-  const dropdownController = useRef(null);
+  const [isloading, setIsLoading] = useState(false);
+  const [suggestedList, setSuggestedList] = useState([]);
   const navigation = useNavigation() as any;
 
-  const searchRef = useRef(null);
+  const [fontsLoaded] = useFonts({
+    "Cairo-Regular": require("../../../../../assets/fonts/Cairo-Regular.ttf"),
+  });
 
-  const { data: totalData, isLoading: isTotalLoading } = useQuery(
-    "GET_PRODUCTS_TOTAL",
-    async () => GET_PRODUCTS_TOTAL()
+  const { data, isLoading: isTotalLoading } = useQuery(
+    "getProductsTotals",
+    async () => getProductsTotals()
   );
+
+  useEffect(() => {
+    Toast.hide();
+    setSuggestedList([]);
+    setSearchQuery("");
+  }, []);
 
   const totalProducts = useMemo(() => {
     if (!isTotalLoading) {
-      return totalData?.data?.reduce((a, b) => a + b.total, 0);
+      return data?.reduce((a, b) => a + b.total, 0);
     }
     return 10;
   }, [isTotalLoading]);
 
-  const getSuggestions = useCallback(async (q) => {
-    if (typeof q !== "string" || q.length < 3) {
-      setSuggestionsList(null);
-      return;
+  useEffect(() => {
+    if (!!searchQuery) {
+      retrieveProducts(`products?search=${searchQuery}`).then((response) => {
+        setSearchQuery(searchQuery);
+
+        if (response?.data?.length > 0) {
+          const products = response?.data;
+
+          const suggestions = products?.map((item) => ({
+            id: item.id,
+            title: item.name,
+            src: item.images[0].src,
+          }));
+
+          setSuggestedList(suggestions);
+
+          Toast.show({
+            type: "serach",
+            props: {
+              data: suggestions,
+              onAction: (id) => {
+                Toast.hide();
+
+                const product = products?.filter(
+                  (product) => `${product.id}` === `${id}`
+                );
+                if (!!product) {
+                  navigation?.navigate("ProductDetailsScreen", {
+                    product: product[0],
+                  });
+                }
+                Toast.hide();
+              },
+            },
+            position: "top",
+            swipeable: false,
+            autoHide: false,
+          });
+        }
+      });
     }
+  }, [searchQuery]);
 
-    setLoading(true);
-    GET_PRODUCTS(null, totalProducts).then((response) => {
-      const items = response.data;
-
-      const suggestions = items.map((item) => ({
-        id: item.id,
-        title: item.name,
-      }));
-
-      setSuggestionsList(suggestions);
-      setProducts(items);
-      setSearchQuery(q);
-
-      setLoading(false);
+  const onSubmitHandler = (e) => {
+    setSearchQuery("");
+    navigation.navigate("SearchProductsScreen", {
+      searchQuery,
+      productsPerPage: totalProducts,
     });
-  }, []);
 
-  const onClearPress = useCallback(() => {
-    setSuggestionsList(null);
-  }, []);
+    Toast.hide();
+  };
 
   return (
-    <AutocompleteDropdownContextProvider headerOffset={45}>
+    <View style={{ flex: 1 }}>
       <AutocompleteDropdown
-        ref={searchRef}
-        controller={(controller) => {
-          dropdownController.current = controller;
-        }}
-        dataSet={suggestionsList}
-        onChangeText={getSuggestions}
-        onSelectItem={(item) => {
-          const product = products?.filter(
-            (product) => product.id === Number(item.id)
-          );
-
-          if (item && product.length > 0)
-            navigation.navigate("ProductDetailsScreen", {
-              product: product[0],
-            });
-        }}
+        onChangeText={setSearchQuery}
+        onSubmit={onSubmitHandler}
         debounce={600}
-        suggestionsListMaxHeight={Dimensions.get("window").height * 0.4}
-        onClear={onClearPress}
-        onSubmit={(e) => {
-          navigation.navigate("SearchProductsScreen", {
-            searchQuery,
-            productsPerPage: totalProducts,
-          });
-        }}
-        onFocus={() => {
-          setSuggestionsList([]);
-        }}
-        loading={loading}
-        useFilter={false}
-        textInputProps={{
-          placeholder: "Chercher un produit",
-          autoCorrect: false,
-          autoCapitalize: "none",
-        }}
-        emptyResultText=""
-        EmptyResultComponent={<></>}
-        inputHeight={35}
-        showChevron={false}
-        closeOnBlur={false}
-        showClear={false}
+        loading={isloading}
         inputContainerStyle={{
-          backgroundColor: MD2Colors.grey200,
+          height: 35,
+          width: "100%",
+          borderRadius: 5,
+          marginBottom: 5,
+          backgroundColor: MD2Colors.white,
+          borderWidth: 0.2,
+          borderColor: MD2Colors.indigo300,
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+        showChevron={false}
+        textInputProps={{
+          placeholder: "Rechercher un produit",
+          style: {
+            fontFamily: "Cairo-Regular",
+            color: MD2Colors.indigo800,
+          },
         }}
       />
-    </AutocompleteDropdownContextProvider>
+    </View>
   );
 });

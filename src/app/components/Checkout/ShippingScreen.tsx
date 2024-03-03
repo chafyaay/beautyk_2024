@@ -20,6 +20,7 @@ import { deviceHeight, deviceWidth } from "../../utils/device";
 import Storage from "react-native-storage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
+import { TextField } from "../../components/UI/TextField";
 
 const shippingForm = {
   first_name: "yassine",
@@ -86,7 +87,6 @@ const DisplayingErrorMessagesSchema = Yup.object().shape({
 
 export default function ShippingScreen({ navigation, route }) {
   const [isLoading, setIsLoading] = useState(false);
-  const [responseMessage, setResponseMessage] = useState("");
   useLayoutEffect(() => {}, []);
 
   return (
@@ -109,21 +109,12 @@ export default function ShippingScreen({ navigation, route }) {
               <>
                 {Object.keys(shippingForm).map((input, index) => (
                   <View key={index}>
-                    <TextInput
+                    <TextField
                       disabled={isLoading}
-                      style={{ marginTop: 10 }}
                       label={getFormLabel(input)}
-                      onChangeText={handleChange(input)}
-                      onBlur={handleBlur(input)}
+                      handleChange={handleChange(input)}
+                      handleBlur={handleBlur(input)}
                       value={values[input]}
-                      dense
-                      mode="outlined"
-                      theme={MD2LightTheme}
-                      activeOutlineColor={
-                        touched[input] && errors[input]
-                          ? MD2Colors.red800
-                          : MD2Colors.indigo500
-                      }
                     />
                     {touched[input] && errors[input] && (
                       <Text

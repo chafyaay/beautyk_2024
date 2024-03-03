@@ -5,6 +5,7 @@ export const SET_CATEGORY = "product/SET_CATEGORY";
 export const HOME_PROMOTION_BANNER = "product/HOME_PROMOTION_BANNER";
 export const HOME_CATEGORIES_SLIDER = "product/HOME_CATEGORIES_SLIDER";
 export const HOME_BANNERS = "product/HOME_BANNERS";
+export const SET_ALL_PRODUCTS_TOTAL = "product/SET_ALL_PRODUCTS_TOTAL";
 
 export const setAllProducts = (data) => ({
   type: SET_ALL_PRODUCTS,
@@ -38,5 +39,10 @@ export const setHomeCategoriesSlider = (data) => ({
 
 export const setHomeBanners = (data) => ({
   type: HOME_BANNERS,
+  data,
+});
+
+export const setProductTotal = (data) => ({
+  type: SET_ALL_PRODUCTS_TOTAL,
   data,
 });

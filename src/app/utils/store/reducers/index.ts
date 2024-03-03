@@ -1,12 +1,14 @@
 import { combineReducers } from "redux";
 import { cartReducer } from "./cart.reducers";
-import { userReducer } from "./user.reducers";
+import { customerReducer, orderReducer, userReducer } from "./user.reducers";
 import { productReducers } from "./product.reducers";
 import { homeDataReducers } from "./home-data.reducers";
 
-const reducers = {
+export const reducers = {
   cart: cartReducer,
   user: userReducer,
+  orders: orderReducer,
+  customer: customerReducer,
   products: productReducers,
   homeData: homeDataReducers,
 };

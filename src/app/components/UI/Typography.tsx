@@ -13,6 +13,7 @@ export const Typography: React.FC<{
   numberOfLines?: number;
   variant?: "headlineMedium" | "bodyMedium" | "titleMedium" | "bodyMedium";
   type?: "default" | "primary";
+  textTrasform?: "uppercase" | "capitalize" | "lowercase";
 }> = ({
   children,
   size,
@@ -23,6 +24,7 @@ export const Typography: React.FC<{
   variant,
   color,
   type,
+  textTrasform,
 }) => {
   const [fontsLoaded] = useFonts({
     BebasNeue: require("../../../../assets/fonts/BebasNeue-Regular.ttf"),
@@ -36,6 +38,26 @@ export const Typography: React.FC<{
     "IBMPlexSerif-Italic": require("../../../../assets/fonts/IBMPlexSerif-Italic.ttf"),
   });
 
+  const fw = fontWeight || "Light";
+
+  const styles = StyleSheet.create({
+    style: {
+      fontFamily:
+        variant === "bodyMedium" ? "IBMPlexSerif-Italic" : `Cairo-${fw}`,
+      fontWeight: "100",
+      fontSize: size,
+      textAlign: align,
+      // backgroundColor: type ? MD2Colors.yellow600 : "",
+      overflow: type ? "hidden" : "visible",
+      paddingLeft: type ? 5 : 0,
+      paddingRight: type ? 5 : 0,
+      borderRadius: 3,
+      textTransform: textTrasform,
+      lineHeight: !!size ? size + 5 : size,
+      paddingTop: size ? size / 2 : size,
+    },
+  });
+
   return (
     <>
       {fontsLoaded && (
@@ -44,22 +66,11 @@ export const Typography: React.FC<{
             <Text
               variant={variant}
               numberOfLines={numberOfLines}
-              style={{
-                fontFamily:
-                  variant === "bodyMedium"
-                    ? "IBMPlexSerif-Italic"
-                    : `Cairo-${fontWeight}`,
-                fontWeight: "100",
-                fontSize: size,
-                textAlign: align,
-                color: color,
-                backgroundColor: type ? MD2Colors.yellow600 : "",
-                overflow: type ? "hidden" : "",
-                paddingLeft: type ? 5 : 0,
-                paddingRight: type ? 5 : 0,
-                borderRadius: 3,
-                ...style,
-              }}
+              style={[
+                styles.style,
+                !!style ? style : {},
+                !!color ? { color: color } : {},
+              ]}
             >
               {child}
             </Text>

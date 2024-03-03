@@ -13,7 +13,7 @@ import {
   Raleway_900Black,
   useFonts,
 } from "@expo-google-fonts/raleway";
-import { TextHolder } from "./TextHolder";
+
 import { useState } from "react";
 import { View } from "react-native";
 import Spacer from "./Spacer";
@@ -28,9 +28,11 @@ type TextFieldProps = {
   error?: string;
   secureTextEntry?: boolean;
   disabled?: boolean;
+  readOnly?: boolean;
   handleChange: (e: string) => void;
   handleBlur?: (e) => void;
   onFocus?: (e) => void;
+  handleClick?: (e) => void;
 };
 
 export const TextField: React.FC<TextFieldProps> = ({
@@ -42,9 +44,11 @@ export const TextField: React.FC<TextFieldProps> = ({
   multiline,
   hidden,
   disabled,
+  readOnly,
   handleChange,
   handleBlur,
   onFocus,
+  handleClick,
 }) => {
   const [hidePassword, setHidePassword] = useState(false);
   const [fontsLoaded] = useFonts({
@@ -70,6 +74,7 @@ export const TextField: React.FC<TextFieldProps> = ({
             label={label}
             onChangeText={handleChange}
             onBlur={handleBlur}
+            onPressIn={handleClick}
             multiline={multiline}
             secureTextEntry={hidePassword}
             textColor={MD2Colors.black}
@@ -77,24 +82,32 @@ export const TextField: React.FC<TextFieldProps> = ({
             disabled={hidden}
             onFocus={onFocus}
             outlineColor={
-              touched && error ? MD2Colors.redA400 : MD2Colors.black
+              touched && error ? MD2Colors.redA400 : MD2Colors.grey300
             }
             activeOutlineColor={
               touched && error ? MD2Colors.redA400 : MD2Colors.black
             }
-            style={{
-              color: MD2Colors.redA400,
-              height: multiline ? 80 : "auto",
-              position: hidden ? "absolute" : "relative",
-              zIndex: hidden ? 0 : 1,
-              opacity: hidden ? 0 : 1,
-              marginBottom: 10,
-            }}
+            outlineStyle={{ borderColor: MD2Colors.grey300 }}
+            style={[
+              {
+                color: MD2Colors.redA400,
+                position: hidden ? "absolute" : "relative",
+                zIndex: hidden ? 0 : 1,
+                opacity: hidden ? 0 : 1,
+              },
+              readOnly
+                ? {
+                    backgroundColor: MD2Colors.grey300,
+                  }
+                : {},
+            ]}
             contentStyle={{
               fontFamily: multiline ? "IBMPlexSerif-Italic" : "Cairo-Regular",
               fontSize: 13,
               color: MD2Colors.grey900,
+              height: multiline ? 100 : 36,
             }}
+            placeholder={label}
           />
 
           {secureTextEntry && (
@@ -111,10 +124,13 @@ export const TextField: React.FC<TextFieldProps> = ({
           {touched && error && (
             <Typography
               fontWeight="Light"
-              children={error}
+              children={"- " + error}
+              size={12}
               color={MD2Colors.redA400}
+              style={{ letterSpacing: 1 }}
             />
           )}
+          <Spacer size={10} />
         </View>
       )}
     </>

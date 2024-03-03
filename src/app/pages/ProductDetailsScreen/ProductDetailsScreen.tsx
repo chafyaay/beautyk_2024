@@ -18,11 +18,11 @@ import { useSelector } from "react-redux";
 import AddToCart from "../../components/AddToCart";
 import { ProductProps } from "../../utils/models";
 import { useQuery } from "react-query";
-import { GET_SHIPPING_MODES } from "../../utils/api-calls";
+import { getProductsShippingModeApiCall } from "../../utils/api-calls";
 import { ReviewList } from "../../components/Reviews/ReviewList";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { PressableButton } from "../../components/UI/Buttons";
-import { TextHolder } from "../../components/UI/TextHolder";
+
 import {
   InStockText,
   PriceText,
@@ -48,8 +48,8 @@ export default function ProductDetailsScreen({ route, navigation }) {
   } = product;
 
   const { data, isLoading } = useQuery(
-    "GET_SHIPPING_MODES",
-    GET_SHIPPING_MODES
+    "getProductsShippingModeApiCall",
+    getProductsShippingModeApiCall
   );
 
   useEffect(() => {
@@ -91,7 +91,13 @@ export default function ProductDetailsScreen({ route, navigation }) {
             />
 
             <Divider style={{ marginTop: 20, marginBottom: 10 }} />
-            <Typography size={20} fontWeight="Medium" variant="headlineMedium">
+            <Typography
+              style={{ lineHeight: 19, paddingTop: 20 }}
+              size={18}
+              fontWeight="Medium"
+              variant="headlineMedium"
+              textTrasform={"capitalize"}
+            >
               {name}
             </Typography>
 
@@ -122,49 +128,53 @@ export default function ProductDetailsScreen({ route, navigation }) {
                 product={product}
               />
             </View>
-
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "flex-start",
-                alignItems: "center",
-                padding: 10,
-                backgroundColor: MD2Colors.grey100,
-                borderRadius: 5,
-                marginTop: 20,
-              }}
-            >
-              <Icon
-                color={MD2Colors.black}
-                source={"truck-cargo-container"}
-                size={30}
-              />
-              <View
-                style={{
-                  paddingLeft: 20,
-                }}
-              >
-                {!!isLoading ? (
-                  <ActivityIndicator color={MD2Colors.black} size={17} />
-                ) : (
-                  shippingData?.map((item: any, index: number) => (
-                    <Typography variant="bodyMedium" key={index}>
-                      {"- " + item.description}
-                    </Typography>
-                  ))
-                )}
-              </View>
-            </View>
-            <Spacer size={10} />
-
+            <Spacer size={30} />
             <PressableButton icon="whatsapp" fontWeight="Bold" type="whatsapp">
               Commander via WhatsApp
             </PressableButton>
 
-            <Divider style={{ marginTop: 20, marginBottom: 20 }} />
+            <View>
+              <Spacer size={16} />
+              <Typography size={14} fontWeight="Bold">
+                Détails de Livraison
+              </Typography>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                  padding: 10,
+                  backgroundColor: MD2Colors.grey100,
+                  borderRadius: 5,
+                }}
+              >
+                <Icon
+                  color={MD2Colors.black}
+                  source={"truck-cargo-container"}
+                  size={30}
+                />
+                <View
+                  style={{
+                    paddingLeft: 20,
+                  }}
+                >
+                  {!!isLoading ? (
+                    <ActivityIndicator color={MD2Colors.black} size={17} />
+                  ) : (
+                    shippingData?.map((item: any, index: number) => (
+                      <Typography size={13} key={index}>
+                        {"- " + item.description}
+                      </Typography>
+                    ))
+                  )}
+                </View>
+              </View>
+            </View>
+            <Spacer size={10} />
+
+            <Spacer size={30} />
 
             <SegmentedButtons
-              theme={MD2LightTheme}
               value={segmentedButtonsValue}
               onValueChange={setSegmentedButtonsValue}
               buttons={[

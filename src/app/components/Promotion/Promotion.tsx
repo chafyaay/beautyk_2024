@@ -6,20 +6,25 @@ import {
   ImageBackground,
   ActivityIndicator,
 } from "react-native";
-import Carousel from "react-native-snap-carousel";
+import Carousel, { Pagination } from "react-native-snap-carousel";
 import { useQuery } from "react-query";
 import { deviceWidth } from "../../utils/device";
 import { MD2Colors } from "react-native-paper";
 import { Skelton } from "../UI/Skelton";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
+import { getHomeDataApi } from "../../utils/api-calls";
+import { useEffect, useState } from "react";
+import { PressableButton } from "../UI/Buttons";
 
 export default function Promotion() {
   const navigation = useNavigation() as any;
-  const { homeData } = useSelector((state: any) => state);
-  const data = homeData.promotion;
 
-  const _renderItem = ({ item, index }) => {
+  const { data, isLoading } = useQuery("get promotion", async () =>
+    getHomeDataApi("promotion")
+  );
+
+  const RenderCarouselItems = ({ item, index }) => {
     return (
       <View
         style={{
@@ -74,18 +79,52 @@ export default function Promotion() {
     );
   };
 
-  if (data?.length > 0)
+  const Item = ({ item, index }) => {
     return (
-      <Carousel
-        layout="default"
-        autoplay
-        pagingEnabled
-        hasParallaxImages
-        data={data}
-        renderItem={_renderItem}
-        sliderWidth={deviceWidth}
-        itemWidth={deviceWidth}
-      />
+      <View style={{ width: 100 }}>
+        <PressableButton fontWeight="Bold" type="default">
+          hello-{index}
+        </PressableButton>
+      </View>
+    );
+  };
+
+  const [activeSlide, setActiveSlide] = useState(1);
+
+  useEffect(() => {});
+
+  if (!isLoading)
+    return (
+      <>
+        <Carousel
+          layout="default"
+          layoutCardOffset={18}
+          autoplay
+          data={data?.data}
+          renderItem={Item}
+          sliderWidth={deviceWidth}
+          itemWidth={100}
+          onSnapToItem={setActiveSlide}
+          numColumns={3}
+        />
+        <Pagination
+          dotsLength={data?.data?.length}
+          activeDotIndex={activeSlide}
+          dotStyle={{
+            width: 10,
+            height: 10,
+            borderRadius: 5,
+            marginHorizontal: 8,
+          }}
+          inactiveDotStyle={
+            {
+              // Define styles for inactive dots here
+            }
+          }
+          inactiveDotOpacity={0.4}
+          inactiveDotScale={0.6}
+        />
+      </>
     );
   else return <Skelton type="CAROUSEL" />;
 }

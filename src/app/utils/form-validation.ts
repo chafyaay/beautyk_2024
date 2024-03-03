@@ -66,6 +66,12 @@ export const BillingAdressValidation = {
     .required("Email est obligatoire. "),
 };
 
+export const EmailValidator = {
+  email: Yup.string()
+    .email("Email invalide")
+    .required("Email est obligatoire. "),
+};
+
 export const LoginValidation = Yup.object().shape({
   username: Yup.string()
     .email("Email invalide")

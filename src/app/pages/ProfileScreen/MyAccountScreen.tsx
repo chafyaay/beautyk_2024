@@ -12,10 +12,10 @@ export const MyAccountScreen = ({ navigation }) => {
   ) as UserProps;
 
   const customerDetails = {
-    first_name: customer.first_name,
-    last_name: customer.last_name,
+    first_name: customer?.first_name,
+    last_name: customer?.last_name,
     name: user.displayName,
-    email: customer.email,
+    email: customer?.email,
   };
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export const MyAccountScreen = ({ navigation }) => {
   return (
     <View style={{ backgroundColor: "white", flex: 1 }}>
       <ScrollView style={{ padding: 15, height: deviceHeight }}>
-        <AccountDetails userId={customer.id} userDetails={customerDetails} />
+        <AccountDetails userId={customer?.id} userDetails={customerDetails} />
       </ScrollView>
     </View>
   );

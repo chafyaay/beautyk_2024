@@ -11,12 +11,14 @@ import {
   LoggedInReviewValidation,
   LoggedOutReviewValidation,
 } from "../../utils/form-validation";
-import { UserProps } from "../../utils/store/reducers/user.reducers";
 import { PressableButton } from "../UI/Buttons";
 import Spacer from "../UI/Spacer";
 import { TextField } from "../UI/TextField";
-import { TextHolder } from "../UI/TextHolder";
+
 import * as Yup from "yup";
+import { UserProps } from "../../utils/store/reducers";
+import { Typography } from "../UI/Typography";
+import { userSelector } from "../../utils/store/selectors";
 
 export const Rating = ({ setRating, rating }) => (
   <View>
@@ -31,7 +33,7 @@ export const Rating = ({ setRating, rating }) => (
             color={
               rating + 1 <= item ? MD2Colors.grey400 : MD2Colors.yellowA700
             }
-            size={34}
+            size={25}
             source="star"
           />
         </Pressable>
@@ -44,20 +46,20 @@ const AddReviewForm: React.FC<{
   productId?: number;
   reviewSubmitted?: (e: boolean) => void;
 }> = ({ productId, reviewSubmitted }) => {
-  const { token, user } = useSelector((state: UserProps) => state.user);
   const [rating, setRating] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [reviewForm, setReviewForm] = useState({});
   const [reviewValidation, setReviewValidation] = useState({});
-  const route = useRoute() as any;
   const formik = useRef() as any;
+
+  const user = useSelector(userSelector) as any;
 
   useEffect(() => {
     if (!!rating) formik.current.setFieldValue("rate", rating);
   }, [rating]);
 
   useEffect(() => {
-    if (!!token) {
+    if (!!user) {
       setReviewForm({
         review: "",
         rate: 0,
@@ -76,8 +78,9 @@ const AddReviewForm: React.FC<{
 
   const onSubmit = async (values) => {
     setIsLoading(true);
+    reviewSubmitted(false);
     const data = {
-      product_id: Number(route.params.id) || productId,
+      product_id: productId,
       reviewer: user.userName,
       reviewer_email: user.email,
       rating: values.rate,
@@ -101,41 +104,49 @@ const AddReviewForm: React.FC<{
           msg: response.message,
         },
       });
+      reviewSubmitted(true);
     }
 
     setIsLoading(false);
+
     formik.reset();
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: "white" }}>
-      <>
-        <Rating setRating={setRating} rating={rating} />
-        <Spacer size={10} />
-        <Formik
-          validationSchema={Yup.object().shape(reviewValidation)}
-          onSubmit={onSubmit}
-          initialValues={reviewForm}
-          validateOnBlur
-          validateOnChange
-          innerRef={formik}
-          validateOnMount
-        >
-          {({
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            values,
-            touched,
-            errors,
-            isValid,
-          }) => (
-            <View>
+    <>
+      <Typography fontWeight="Bold" textTrasform={"uppercase"}>
+        Ajouter des avis
+      </Typography>
+      <Spacer size={10} />
+      <Rating setRating={setRating} rating={rating} />
+      <Spacer size={10} />
+      <Formik
+        validationSchema={Yup.object().shape(reviewValidation)}
+        onSubmit={onSubmit}
+        initialValues={reviewForm}
+        validateOnBlur
+        validateOnChange
+        innerRef={formik}
+        validateOnMount
+      >
+        {({
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          values,
+          touched,
+          errors,
+          isValid,
+        }) => (
+          <View style={{ flex: 1, justifyContent: "space-between" }}>
+            <View style={{ flex: 1 }}>
               {Object.keys(reviewForm).map((key) => (
                 <>
                   <TextField
                     value={values[key]}
-                    label={DataIndex[key]}
+                    label={
+                      DataIndex[key === "review" ? "enter_your_review" : ""]
+                    }
                     handleChange={handleChange(key)}
                     handleBlur={handleBlur(key)}
                     multiline={key === "review"}
@@ -144,29 +155,29 @@ const AddReviewForm: React.FC<{
                     hidden={key === "rate"}
                   />
                   {errors[key] && (
-                    <TextHolder
+                    <Typography
                       size={13}
                       color={MD2Colors.redA700}
-                      text={String(errors[key])}
+                      children={String(errors[key])}
                     />
                   )}
                 </>
               ))}
-
-              <PressableButton
-                type="primary"
-                disabled={!isValid}
-                onPress={handleSubmit}
-                children={"Soumettre"}
-                fullwidth
-                isLoading={isLoading}
-                fontWeight="Bold"
-              />
             </View>
-          )}
-        </Formik>
-      </>
-    </View>
+            <PressableButton
+              style={{ flex: 1 }}
+              type="primary"
+              disabled={!isValid}
+              onPress={handleSubmit}
+              children={"Soumettre"}
+              fullwidth
+              isLoading={isLoading}
+              fontWeight="Bold"
+            />
+          </View>
+        )}
+      </Formik>
+    </>
   );
 };
 

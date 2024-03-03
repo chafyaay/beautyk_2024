@@ -5,5 +5,5 @@ export default function ProductListScreen() {
   const route = useRoute() as any;
   const { id } = route.params;
 
-  return <ProductList showFilterBar params={`products?category=${id}`} />;
+  return <ProductList showFilterBar apiParams={`products/category=${id}/`} />;
 }

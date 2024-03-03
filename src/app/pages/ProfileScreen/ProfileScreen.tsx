@@ -1,41 +1,55 @@
 import { ImageBackground, StyleSheet, View } from "react-native";
 
-import { ProfileMenu, Welcome } from "../../components/MyProfile/ProfileMenu";
+import { ProfileMenu } from "../../components/MyProfile/ProfileMenu";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Separator } from "../../components/commun/Separator";
 import { GET_ORDERS } from "../../utils/api-calls";
 import { deviceWidth } from "../../utils/device";
+import { Welcome } from "../../components/MyProfile/Welcome";
+import { useNavigation } from "@react-navigation/native";
+import { Avatar, MD2Colors, Text } from "react-native-paper";
+import { Typography } from "../../components/UI/Typography";
+import { customerSelector, userSelector } from "../../utils/store/selectors";
 
 export const ProfileScreen = () => {
-  const [orders, setOrders] = useState([]);
-  const { customer, user } = useSelector((state: any) => state?.user) as any;
+  const customer = useSelector(customerSelector);
+  const profile = useSelector(userSelector);
 
-  const getOrders = async () => {
-    return await GET_ORDERS();
-  };
-
+  const navigation = useNavigation();
   useEffect(() => {
-    getOrders()
-      .then((response) => {
-        const id = customer?.id;
-        if (!!id) {
-          const newOrders = !!(response?.length > 0)
-            ? response?.filter((order) => order?.customer_id === id)
-            : [];
-          setOrders(newOrders);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [customer]);
-
+    navigation.setOptions({
+      headerLeft: () => (
+        <View>
+          <Typography variant="bodyMedium" size={12}>
+            Bonjour
+          </Typography>
+          <Typography style={{ lineHeight: 20 }} fontWeight="Bold">
+            {customer?.first_name + " " + customer?.last_name}
+          </Typography>
+        </View>
+      ),
+      headerRight: () => (
+        <>
+          {!profile?.avatar_url ? (
+            <Avatar.Text
+              size={35}
+              label={
+                String(customer?.first_name).slice(0, 1).toUpperCase() +
+                String(customer?.last_name).slice(0, 1).toUpperCase()
+              }
+            />
+          ) : (
+            <Avatar.Image size={35} source={{ uri: customer?.avatar_url }} />
+          )}
+        </>
+      ),
+      headerTitle: () => <></>,
+    });
+  });
   return (
     <View style={styles.container}>
-      <Welcome customer={customer} profile={customer} />
-      <Separator size={20} />
-      <ProfileMenu isLoggedIn={!!user} ordersCount={orders.length} />
+      <ProfileMenu />
       <ImageBackground
         style={{
           width: deviceWidth - 150,
@@ -54,7 +68,7 @@ export const ProfileScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { flex: 1, backgroundColor: MD2Colors.white },
   row: {
     flexDirection: "row",
     flexWrap: "nowrap",

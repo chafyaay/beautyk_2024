@@ -25,7 +25,7 @@ interface OnSaleProductsProps {
   navigation?: any;
 }
 
-const OnSaleProducts: React.FC<OnSaleProductsProps> = ({ navigation }) => {
+const OnSaleProducts: React.FC<OnSaleProductsProps> = () => {
   const { data, isLoading } = useQuery("getOnSaleproducts", async () =>
     getOnSaleproducts(4)
   );
@@ -44,7 +44,6 @@ const OnSaleProducts: React.FC<OnSaleProductsProps> = ({ navigation }) => {
               }}
             >
               <ProductCard
-                navigation={navigation}
                 product={product}
                 showAddTocart={false}
                 showTitle={false}

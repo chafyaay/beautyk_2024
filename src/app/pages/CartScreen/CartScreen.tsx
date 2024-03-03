@@ -26,9 +26,12 @@ import { useNavigation } from "@react-navigation/native";
 import { Typography } from "../../components/UI/Typography";
 import AppHeader from "../../components/AppHeader/AppHeader";
 import Spacer from "../../components/UI/Spacer";
+import { cartReducer } from "../../utils/store/reducers/cart.reducers";
+import { cartState } from "../../utils/store/store";
 
 export default function CartScreen() {
-  const { cart } = useSelector((state) => state) as any;
+  const cart = useSelector(cartState);
+
   const cartCount = cart?.items?.reduce((a, b) => (a += b?.quantity), 0);
   const subTotal = cart?.items?.reduce(
     (a, b) => (a += b?.quantity * b?.product.price),

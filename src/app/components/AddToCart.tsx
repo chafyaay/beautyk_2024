@@ -1,9 +1,5 @@
 import { StyleSheet, View } from "react-native";
 import { Button, IconButton, MD2Colors, Text } from "react-native-paper";
-import {
-  onClearCart,
-  updateCartItem,
-} from "../utils/store/actions/cart.actions";
 import { connect } from "react-redux";
 
 import React, { useEffect, useState } from "react";
@@ -12,6 +8,10 @@ import Toast from "react-native-toast-message";
 import { PressableButton } from "./UI/Buttons";
 import { BG_COLOR, TEXT_COLOR } from "../utils/device";
 import { Typography } from "./UI/Typography";
+import {
+  onClearCart,
+  updateCartItem,
+} from "../utils/store/actions/cart.actions";
 
 interface AddToCartProps {
   navigation: any;
@@ -38,45 +38,32 @@ const AddToCart: React.FC<AddToCartProps> = ({
   isProductPage: isProductPage,
   showDeleteIcon,
   navigation,
-  route,
 }) => {
   const [cartCount, setCartCount] = useState(1);
 
   const item = cart?.items?.find((it) => it.product?.id === product?.id);
 
   const handleAddToCart = (a: number) => {
-    const prevQuantity = item ? item.quantity : 0;
-    updateCartItem({
-      product,
-      quantity: prevQuantity + a,
-    });
-    Toast.show({
-      type: isCartPage ? "success" : "updatedcart",
-      props: !isCartPage
-        ? {
-            cart: () => {
-              navigation?.navigate("CartScreen");
-            },
-          }
-        : { msg: "Votre produit a été ajouté au panier" },
-      text1: "Votre produit a été ajouté au panier",
-      text2: "Voulez-vous  Continuer vos achats ?",
-    });
-    /*  Toast?.show({
-      position: "bottom",
-      type: isCartPage ? "success" : "updatedcart",
-      text1: "Votre produit a été ajouté au panier",
-      text2: "Voulez-vous  Continuer vos achats ?",
-      props: {
-        msg: "Votre produit a été ajouté au panier",
-        home: () => {
-          navigation?.navigate("CartScreen");
-        },
-        cart: () => {
-          navigation?.navigate("HomeScreen");
-        },
-      },
-    }); */
+    if (product.stock_status === "instock") {
+      const prevQuantity = item ? item.quantity : 0;
+      updateCartItem({
+        product,
+        quantity: prevQuantity + a,
+      });
+      Toast.show({
+        type: isCartPage ? "success" : "updatedcart",
+        position: isCartPage ? "top" : "bottom",
+        props: !isCartPage
+          ? {
+              cart: () => {
+                navigation?.navigate("CartScreen");
+              },
+            }
+          : { msg: "Votre produit a été ajouté au panier" },
+        text1: "Votre produit a été ajouté au panier",
+        text2: "Voulez-vous  Continuer vos achats ?",
+      });
+    }
   };
 
   useEffect(() => {
@@ -85,7 +72,6 @@ const AddToCart: React.FC<AddToCartProps> = ({
 
   useEffect(() => {
     setCartCount(1);
-    // setShowDialog(true);
   }, [item?.quantity]);
 
   const RenderAddToCart = () => {
@@ -162,7 +148,9 @@ const AddToCart: React.FC<AddToCartProps> = ({
             <IconButton
               size={10}
               icon="delete"
-              onPress={() => handleAddToCart(-item?.quantity)}
+              onPress={() => {
+                handleAddToCart(-item?.quantity);
+              }}
               mode="contained"
               containerColor={MD2Colors.yellow700}
               iconColor={MD2Colors.black}

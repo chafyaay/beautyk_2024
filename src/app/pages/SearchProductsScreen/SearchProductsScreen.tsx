@@ -7,7 +7,7 @@ const SearchProductsScreen = () => {
   return (
     <ProductList
       showFilterBar
-      params={`products?search=${params.searchQuery}`}
+      apiParams={`products/search=${params.searchQuery}/`}
     />
   );
 };

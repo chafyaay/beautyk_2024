@@ -1,8 +1,17 @@
 import { Pressable, StyleSheet, View } from "react-native";
-import { Dialog, Icon, IconButton, Portal, Text } from "react-native-paper";
+import {
+  Dialog,
+  Icon,
+  IconButton,
+  MD2Colors,
+  Portal,
+  Text,
+} from "react-native-paper";
 import { TEXT_COLOR } from "../../utils/device";
 import { useEffect, useState } from "react";
 import { Picker } from "@react-native-picker/picker";
+import { Typography } from "../UI/Typography";
+import { PressableButton } from "../UI/Buttons";
 
 interface OrderByProps {
   setOrderByIndex: (id: number) => void;
@@ -11,50 +20,31 @@ interface OrderByProps {
 
 const OrderBy: React.FC<OrderByProps> = ({ setOrderByIndex, setCardView }) => {
   const [visible, setVisible] = useState(false);
-  const [cardViewType, setCardViewType] = useState<"GRID" | "LIST">();
+  const [cardViewType, setCardViewType] = useState(false);
   const [selectedValue, setSelectedValue] = useState("");
 
   const sortByData = process.env.SORT_PRODUCT.split(",");
 
   useEffect(() => {
-    setCardViewType("GRID");
-  }, []);
-
-  useEffect(() => {
-    if (!!cardViewType) {
-      setCardView(cardViewType);
-    }
+    setCardView(cardViewType ? "LIST" : "GRID");
   }, [cardViewType]);
-
-  const setCardViewHandler = (T: "GRID" | "LIST") => {
-    setCardViewType(T);
-  };
 
   return (
     <>
       <View style={styles.container}>
         <Pressable onPress={() => setVisible(true)} style={styles.sortBySlect}>
-          <Text variant="bodyMedium">{selectedValue || sortByData[0]} </Text>
+          <Typography variant="bodyMedium">
+            {selectedValue || sortByData[0]}{" "}
+          </Typography>
           <Icon size={20} source="chevron-down" />
         </Pressable>
-        <View style={styles.sortByContainer}>
-          <IconButton
-            onPress={() => {
-              setCardViewHandler("GRID");
-            }}
-            mode={cardViewType === "GRID" ? "contained" : "contained-tonal"}
-            size={20}
-            icon="view-grid-outline"
-          />
-          <IconButton
-            mode={cardViewType === "LIST" ? "contained" : "contained-tonal"}
-            onPress={() => {
-              setCardViewHandler("LIST");
-            }}
-            size={20}
-            icon="view-agenda-outline"
-          />
-        </View>
+
+        <PressableButton
+          onPress={() => setCardViewType((e) => !e)}
+          type="default"
+        >
+          <Icon size={20} source={cardViewType ? "view-grid" : "view-agenda"} />
+        </PressableButton>
       </View>
       {!!visible && (
         <Portal>

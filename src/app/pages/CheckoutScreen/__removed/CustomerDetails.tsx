@@ -11,15 +11,17 @@ import {
   Button,
   MD3LightTheme,
 } from "react-native-paper";
-import { cities } from "../../utils/models";
+import { cities } from "../../../utils/models";
 import { useEffect, useRef, useState } from "react";
 import * as Yup from "yup";
 import { Picker } from "@react-native-picker/picker";
 import { Formik } from "formik";
-import { Separator } from "../../components/commun/Separator";
-import { CustomerInput } from "../../components/UI/CustomerInput";
-import { BG_DARK_COLOR } from "../../utils/device";
-import { TextField } from "../../components/UI/TextField";
+import { Separator } from "../../../components/commun/Separator";
+import { CustomerInput } from "../../../components/UI/CustomerInput";
+import { BG_DARK_COLOR } from "../../../utils/device";
+import { TextField } from "../../../components/UI/TextField";
+import { getReportsApiCall } from "../../../utils/api-calls";
+import { useQuery } from "react-query";
 
 let initialFormInputs = {
   first_name: "",
@@ -101,7 +103,7 @@ export const CustomerDetails: React.FC<{
     <View style={{ flex: 1 }}>
       <Formik
         initialValues={{ email: "", city: "" }}
-        onSubmit={(values) => console.log(values)}
+        onSubmit={(values) => {}}
         validationSchema={validationSchema}
         validateOnBlur
         validateOnChange
@@ -122,10 +124,6 @@ export const CustomerDetails: React.FC<{
                 <TextField
                   label={getFormLabel(input)}
                   handleChange={handleChange(input)}
-                  /*  onSelectionChange={(e) => {
-                    onValidateForm();
-                    getCustomerDetailsHandler(values);
-                  }} */
                   handleBlur={handleBlur(input)}
                   value={values[input]}
                 />
@@ -155,7 +153,11 @@ export const CustomerDetails: React.FC<{
         }}
       />
       <Portal>
-        <Dialog visible={visible} style={{ backgroundColor: "white" }}>
+        <Dialog
+          visible={visible}
+          style={{ backgroundColor: "white" }}
+          onDismiss={() => setVisible(false)}
+        >
           <Dialog.Content>
             <Picker
               selectedValue={cityValue}

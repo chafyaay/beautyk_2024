@@ -12,8 +12,8 @@ import { useEffect } from "react";
 import moment from "moment";
 import "moment/locale/fr";
 import { useSelector } from "react-redux";
-import AddToCart from "../../components/AddToCart";
-import { $primaryColor } from "../../utils/device";
+import AddToCart from "../../../components/AddToCart";
+import { $primaryColor } from "../../../utils/device";
 moment.locale("fr");
 
 export const OrderReceivedScreen = ({ navigation, route }) => {

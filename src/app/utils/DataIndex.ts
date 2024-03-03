@@ -22,6 +22,7 @@ enum DataIndex {
   sub_total = "Sous total",
   total = "Total",
   order_date = "Date d'achat",
+  date_completed = "Délévré le",
   items = "Articles",
   sub_total_items = "Sous total produits",
   shippins_fees = "Frais de livraison  ",
@@ -29,7 +30,7 @@ enum DataIndex {
   shipping_details = "Mode de livraison",
   evalute_products = "Evaluer",
   note = "Votre note",
-  review = "Votre avis",
+  enter_your_review = "Entrer Votre avis",
   currency = "Dh",
 }
 
