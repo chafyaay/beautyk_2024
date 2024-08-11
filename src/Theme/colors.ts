@@ -1,0 +1,48 @@
+import { MD2Colors } from "react-native-paper";
+
+export const colors = {
+  background: {
+    $background: "#FFFFFF",
+    "$background-active": "#8d8d8d50",
+    "$background-hover": "#8d8d8d12",
+    "$background-selected": "#8d8d8d20",
+    "$background-selected-hover": "#8d8d8d32",
+    "$background-brand": "#009EA1",
+    "$background-inverse": "#025152",
+    "$background-inverse-hover": "#013F40",
+  },
+  cta: {
+    "$button-primary": "#ED6C22",
+    "$button-primary-hover": "#FD8F4B",
+    "$button-primary-active": "#9A4311",
+    "$button-secondary": "#768792",
+    "$button-secondary-hover": "#B4C1CB",
+    "$button-secondary-active": "#4B5862",
+    "$button-tertiary": "#009EA1",
+    "$button-tertiary-hover": "#009EA1",
+    "$button-tertiary-active": "#025152",
+    "$button-danger-primary": "#da1e28",
+    "$button-danger-secondary": "#da1e28",
+    "$button-danger-hover": "#ba1b23",
+    "$button-danger-active": "#750e13",
+    "$button-separator": "#e0e0e0",
+    "$button-disabled": "#c6c6c6",
+  },
+  text: {
+    "$text-primary": "#161616",
+    "$text-secondary": "#525252",
+    "$text-placeholder": "#a8a8a8",
+    "$text-on-color": "#ffffff",
+    "$text-helper": "#6f6f6f",
+    "$text-error": "#da1e28",
+    "$text-inverse": "#ffffff",
+    "$text-disabled": "#161616",
+    "$text-on-color-disabled": "#8d8d8d",
+  },
+  link: {
+    "$link-primary": "#ED7138",
+    "$link-primary-hover": "#F0915A",
+    "$link-secondary": "#0043ce",
+    "$link-inverse": "#78a9ff",
+  },
+};
